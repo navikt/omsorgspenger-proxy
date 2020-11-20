@@ -1,7 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 val junitJupiterVersion = "5.7.0"
-val k9rapidVersion = "1.f3af2d5"
 val ktorVersion = "1.4.1"
 val dusseldorfVersion = "1.4.1.82ec597"
 val jsonassertVersion = "1.5.0"
@@ -24,7 +23,6 @@ buildscript {
 }
 
 dependencies {
-    implementation("no.nav.k9.rapid:river:$k9rapidVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")

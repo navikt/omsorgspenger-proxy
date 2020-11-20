@@ -1,0 +1,15 @@
+{
+  "app": "omsorgspenger-proxy",
+  "cluster": "dev-fss",
+  "namespace": "omsorgspenger",
+  "team": "omsorgspenger",
+  "minReplicas": "1",
+  "maxReplicas": "1",
+  "ingresses": [
+    "https://omsorgspenger-proxy.dev.adeo.no"
+  ],
+  "env": {
+    "STS_TOKEN_URL": "https://security-token-service.nais.preprod.local/rest/v1/sts/token",
+    "PDL_BASE_URL": "https://pdl-api.nais.preprod.local/graphql"
+  }
+}
