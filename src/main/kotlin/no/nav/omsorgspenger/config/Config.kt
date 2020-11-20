@@ -4,12 +4,12 @@ import io.ktor.config.ApplicationConfig
 import io.ktor.util.KtorExperimentalAPI
 import java.util.Base64
 
-data class Config(
+internal data class Config(
     val serviceUser: ServiceUser,
     val pdl: PDL,
     val sts: STS
 ) {
-    data class ServiceUser(
+    internal data class ServiceUser(
         val username: String,
         val password: String
     ) {
@@ -20,17 +20,17 @@ data class Config(
         }
     }
 
-    data class PDL(
+    internal data class PDL(
         val url: String
     )
 
-    data class STS(
+    internal data class STS(
         val url: String
     )
 }
 
 @KtorExperimentalAPI
-suspend fun ApplicationConfig.load() = Config(
+internal fun ApplicationConfig.load() = Config(
     serviceUser = Config.ServiceUser(
         username = property("nav.service_user.username").getString(),
         password = property("nav.service_user.password").getString()

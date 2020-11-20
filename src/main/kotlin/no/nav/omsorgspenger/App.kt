@@ -10,7 +10,6 @@ import io.ktor.features.StatusPages
 import io.ktor.jackson.jackson
 import io.ktor.routing.Routing
 import io.ktor.util.KtorExperimentalAPI
-import kotlinx.coroutines.runBlocking
 import no.nav.helse.dusseldorf.ktor.auth.AuthStatusPages
 import no.nav.helse.dusseldorf.ktor.core.DefaultProbeRoutes
 import no.nav.helse.dusseldorf.ktor.core.DefaultStatusPages
@@ -23,7 +22,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @KtorExperimentalAPI
 fun Application.app() {
-    val config = runBlocking { environment.config.load() }
+    val config = environment.config.load()
     install(ContentNegotiation) {
         jackson()
     }
