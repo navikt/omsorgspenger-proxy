@@ -1,6 +1,8 @@
 package no.nav.omsorgspenger.routes
 
 import io.ktor.application.call
+import io.ktor.auth.jwt.JWTPrincipal
+import io.ktor.auth.principal
 import io.ktor.client.HttpClient
 import io.ktor.client.request.accept
 import io.ktor.client.request.header
@@ -15,6 +17,7 @@ import io.ktor.routing.Route
 import io.ktor.routing.post
 import io.ktor.routing.route
 import no.nav.omsorgspenger.NavCallId
+import no.nav.omsorgspenger.NavConsumerToken
 import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.pipeResponse
 import no.nav.omsorgspenger.sts.StsRestClient
@@ -29,13 +32,19 @@ internal fun Route.PdlRoute(
     route("/pdl") {
         post {
             val pdlUrl = config.pdl.url
-            // TODO: hent access token fra request. hvis scopet til proxy, veksle med sts token. hvis ikke, propager tokenet
             val stsToken = stsClient.token()
+            val jwt = call.principal<JWTPrincipal>()!!
+
+            val authToken = if (jwt.erScopetTilOmsorgspengerProxy(config.auth.azureAppClientId))
+                "Bearer $stsToken"
+            else
+                call.request.headers[HttpHeaders.Authorization]!!
+
             val callId = call.request.header(NavCallId) ?: UUID.randomUUID().toString()
 
             val response = httpClient.post<HttpResponse>(pdlUrl) {
-                header(HttpHeaders.Authorization, "Bearer $stsToken")
-                header("Nav-Consumer-Token", "Bearer $stsToken")
+                header(HttpHeaders.Authorization, authToken)
+                header(NavConsumerToken, "Bearer $stsToken")
                 header(HttpHeaders.XCorrelationId, callId)
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
@@ -45,3 +54,6 @@ internal fun Route.PdlRoute(
         }
     }
 }
+
+private fun JWTPrincipal.erScopetTilOmsorgspengerProxy(proxyClientId: String): Boolean =
+    payload.audience.contains(proxyClientId)

@@ -62,7 +62,7 @@ fun Application.app() {
 
     install(Routing) {
         DefaultProbeRoutes()
-        authenticate(*issuers.allIssuers()) {
+        authenticate(*azureAnyScoped) {
             PdlRoute(
                 config = config,
                 stsClient = stsClient,

@@ -42,3 +42,5 @@ val NavCallId: String
     get() = "Nav-Call-Id"
 val NavConsumerId: String
     get() = "Nav-Consumer-Id"
+val NavConsumerToken: String
+    get() = "Nav-Consumer-Token"
