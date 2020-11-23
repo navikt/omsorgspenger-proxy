@@ -2,6 +2,8 @@ package no.nav.omsorgspenger
 
 import io.ktor.application.Application
 import io.ktor.application.install
+import io.ktor.auth.Authentication
+import io.ktor.auth.authenticate
 import io.ktor.client.HttpClient
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.features.CallId
@@ -11,6 +13,10 @@ import io.ktor.jackson.jackson
 import io.ktor.routing.Routing
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.dusseldorf.ktor.auth.AuthStatusPages
+import no.nav.helse.dusseldorf.ktor.auth.allIssuers
+import no.nav.helse.dusseldorf.ktor.auth.issuers
+import no.nav.helse.dusseldorf.ktor.auth.multipleJwtIssuers
+import no.nav.helse.dusseldorf.ktor.auth.withoutAdditionalClaimRules
 import no.nav.helse.dusseldorf.ktor.core.DefaultProbeRoutes
 import no.nav.helse.dusseldorf.ktor.core.DefaultStatusPages
 import no.nav.helse.dusseldorf.ktor.core.fromXCorrelationIdHeader
@@ -38,6 +44,12 @@ fun Application.app() {
         )
     }
 
+    val issuers = environment.config.issuers().withoutAdditionalClaimRules()
+
+    install(Authentication) {
+        multipleJwtIssuers(issuers)
+    }
+
     val httpClient = HttpClient {
         install(JsonFeature)
     }
@@ -50,10 +62,12 @@ fun Application.app() {
 
     install(Routing) {
         DefaultProbeRoutes()
-        PdlRoute(
-            config = config,
-            stsClient = stsClient,
-            httpClient = httpClient
-        )
+        authenticate(*issuers.allIssuers()) {
+            PdlRoute(
+                config = config,
+                stsClient = stsClient,
+                httpClient = httpClient
+            )
+        }
     }
 }
