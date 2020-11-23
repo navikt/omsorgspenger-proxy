@@ -29,25 +29,19 @@ internal fun Route.PdlRoute(
     route("/pdl") {
         post {
             val pdlUrl = config.pdl.url
-            // TODO: hent acess token fra request. hvis scopet til proxy, veksle med sts token. hvis ikke, propager tokenet
+            // TODO: hent access token fra request. hvis scopet til proxy, veksle med sts token. hvis ikke, propager tokenet
             val stsToken = stsClient.token()
             val callId = call.request.header(NavCallId) ?: UUID.randomUUID().toString()
 
-            try {
-                val response = httpClient.post<HttpResponse>(pdlUrl) {
-                    header(HttpHeaders.Authorization, "Bearer $stsToken")
-                    header("Nav-Consumer-Token", "Bearer $stsToken")
-                    header(HttpHeaders.XCorrelationId, callId)
-                    contentType(ContentType.Application.Json)
-                    accept(ContentType.Application.Json)
-                    body = call.receive<JSONObject>()
-                }
-                call.pipeResponse(response)
-            } catch (cause: Throwable) {
-                // TODO: bedre feilhåndtering
-                println("Feil i kall mot PDL: $cause")
-                cause.printStackTrace()
+            val response = httpClient.post<HttpResponse>(pdlUrl) {
+                header(HttpHeaders.Authorization, "Bearer $stsToken")
+                header("Nav-Consumer-Token", "Bearer $stsToken")
+                header(HttpHeaders.XCorrelationId, callId)
+                contentType(ContentType.Application.Json)
+                accept(ContentType.Application.Json)
+                body = call.receive<JSONObject>()
             }
+            call.pipeResponse(response)
         }
     }
 }
