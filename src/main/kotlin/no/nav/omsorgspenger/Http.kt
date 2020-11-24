@@ -4,10 +4,12 @@ import io.ktor.application.ApplicationCall
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.Headers
+import io.ktor.http.HeadersBuilder
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.OutgoingContent
 import io.ktor.response.respond
+import io.ktor.util.StringValues
 import io.ktor.util.filter
 import io.ktor.utils.io.ByteWriteChannel
 import io.ktor.utils.io.copyAndClose
@@ -23,10 +25,8 @@ suspend fun ApplicationCall.pipeResponse(response: HttpResponse) {
         override val headers: Headers = Headers.build {
             appendAll(
                 proxiedHeaders.filter { key, _ ->
-                    !key.equals(
-                        HttpHeaders.ContentType,
-                        ignoreCase = true
-                    ) && !key.equals(HttpHeaders.ContentLength, ignoreCase = true) &&
+                    !key.equals(HttpHeaders.ContentType, ignoreCase = true) &&
+                        !key.equals(HttpHeaders.ContentLength, ignoreCase = true) &&
                         !key.equals(HttpHeaders.TransferEncoding, ignoreCase = true)
                 }
             )
@@ -36,6 +36,16 @@ suspend fun ApplicationCall.pipeResponse(response: HttpResponse) {
             response.content.copyAndClose(channel)
         }
     })
+}
+
+internal fun HeadersBuilder.plusAll(stringValues: StringValues): HeadersBuilder {
+    appendAll(stringValues)
+    return this
+}
+
+internal fun HeadersBuilder.plus(name: String, value: String): HeadersBuilder {
+    append(name, value)
+    return this
 }
 
 val NavCallId: String

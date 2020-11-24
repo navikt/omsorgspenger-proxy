@@ -31,10 +31,11 @@ internal class MockedEnvironment(
         appConfig["nav.service_user.password"] = "test_pw"
         appConfig["nav.auth.issuers.0.alias"] = "azure_proxy_scoped"
         appConfig["nav.auth.issuers.0.type"] = "azure"
-        appConfig["nav.auth.issuers.0.audience"] = "omsorgspenger-proxy"
+        appConfig["nav.auth.issuers.0.audience"] = azureAppClientId
         appConfig["nav.auth.issuers.0.discovery_endpoint"] = wireMockServer.getAzureV2WellKnownUrl()
         appConfig["nav.auth.issuers.1.alias"] = "azure_any_scoped"
         appConfig["nav.auth.issuers.1.discovery_endpoint"] = wireMockServer.getAzureV2WellKnownUrl()
+        appConfig["nav.auth.azure_app_client_id"] = azureAppClientId
     }
 
     internal fun start() = this
@@ -43,3 +44,5 @@ internal class MockedEnvironment(
         wireMockServer.stop()
     }
 }
+
+internal const val azureAppClientId = "omsorgspenger-proxy"

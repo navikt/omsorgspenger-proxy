@@ -8,6 +8,8 @@ import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import no.nav.helse.dusseldorf.testsupport.jws.Azure
 import no.nav.omsorgspenger.testutils.TestApplicationExtension
+import no.nav.omsorgspenger.testutils.azureAppClientId
+import no.nav.omsorgspenger.testutils.mocks.ProxiedHeader
 import no.nav.omsorgspenger.testutils.mocks.likeHeadersBody
 import no.nav.omsorgspenger.testutils.mocks.ulikeHeadersBody
 import org.assertj.core.api.Assertions.assertThat
@@ -33,6 +35,7 @@ internal class PdlRouteTest(
             handleRequest(HttpMethod.Post, "/pdl") {
                 addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken()}")
                 addHeader(HttpHeaders.ContentType, "application/json")
+                addHeader(ProxiedHeader, "anything")
                 setBody("{}")
             }.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
@@ -47,6 +50,7 @@ internal class PdlRouteTest(
             handleRequest(HttpMethod.Post, "/pdl") {
                 addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken("ikke-omsorgspenger-proxy")}")
                 addHeader(HttpHeaders.ContentType, "application/json")
+                addHeader(ProxiedHeader, "anything")
                 setBody("{}")
             }.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
@@ -56,7 +60,7 @@ internal class PdlRouteTest(
     }
 }
 
-internal fun azureIssuerToken(audience: String = "omsorgspenger-proxy") = Azure.V2_0.generateJwt(
+internal fun azureIssuerToken(audience: String = azureAppClientId) = Azure.V2_0.generateJwt(
     clientId = "any",
     audience = audience
 )

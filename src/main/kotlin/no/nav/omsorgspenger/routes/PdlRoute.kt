@@ -5,24 +5,25 @@ import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.principal
 import io.ktor.client.HttpClient
 import io.ktor.client.request.accept
-import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
+import io.ktor.http.HeadersBuilder
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
-import io.ktor.request.header
 import io.ktor.request.receive
 import io.ktor.routing.Route
 import io.ktor.routing.post
 import io.ktor.routing.route
-import no.nav.omsorgspenger.NavCallId
+import io.ktor.util.appendAll
+import io.ktor.util.filter
 import no.nav.omsorgspenger.NavConsumerToken
 import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.pipeResponse
+import no.nav.omsorgspenger.plus
+import no.nav.omsorgspenger.plusAll
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.json.simple.JSONObject
-import java.util.UUID
 
 internal fun Route.PdlRoute(
     config: Config,
@@ -40,12 +41,17 @@ internal fun Route.PdlRoute(
             else
                 call.request.headers[HttpHeaders.Authorization]!!
 
-            val callId = call.request.header(NavCallId) ?: UUID.randomUUID().toString()
+            val proxiedHeaders = call.request.headers.filter { key, _ ->
+                !key.equals(HttpHeaders.Authorization, ignoreCase = true) &&
+                    !key.equals(NavConsumerToken, ignoreCase = true)
+            }
+            val headersBuilder = HeadersBuilder()
+                .plusAll(proxiedHeaders)
+                .plus(HttpHeaders.Authorization, authToken)
+                .plus(NavConsumerToken, "Bearer $stsToken")
 
             val response = httpClient.post<HttpResponse>(pdlUrl) {
-                header(HttpHeaders.Authorization, authToken)
-                header(NavConsumerToken, "Bearer $stsToken")
-                header(HttpHeaders.XCorrelationId, callId)
+                headers.appendAll(headersBuilder)
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 body = call.receive<JSONObject>()
