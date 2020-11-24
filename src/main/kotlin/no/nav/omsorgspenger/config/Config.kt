@@ -7,6 +7,7 @@ import java.util.Base64
 internal data class Config(
     val serviceUser: ServiceUser,
     val pdl: PDL,
+    val oppgave: Oppgave,
     val sts: STS,
     val auth: Auth
 ) {
@@ -22,6 +23,10 @@ internal data class Config(
     }
 
     internal data class PDL(
+        val url: String
+    )
+
+    internal data class Oppgave(
         val url: String
     )
 
@@ -42,6 +47,9 @@ internal fun ApplicationConfig.load() = Config(
     ),
     pdl = Config.PDL(
         url = property("nav.pdl.url").getString()
+    ),
+    oppgave = Config.Oppgave(
+        url = property("nav.oppgave.url").getString()
     ),
     sts = Config.STS(
         url = property("nav.sts.url").getString()

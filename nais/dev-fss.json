@@ -7,10 +7,12 @@
   "maxReplicas": "1",
   "azureTenant": "trygdeetaten.no",
   "ingresses": [
-    "https://omsorgspenger-proxy.dev.adeo.no"
+    "https://omsorgspenger-proxy.dev.adeo.no",
+    "https://omsorgspenger-proxy.dev-fss-pub.nais.io"
   ],
   "env": {
     "STS_TOKEN_URL": "https://security-token-service.nais.preprod.local/rest/v1/sts/token",
-    "PDL_BASE_URL": "https://pdl-api.nais.preprod.local/graphql"
+    "PDL_BASE_URL": "https://pdl-api.nais.preprod.local/graphql",
+    "OPPGAVE_URL": "https://oppgave.nais.preprod.local/"
   }
 }

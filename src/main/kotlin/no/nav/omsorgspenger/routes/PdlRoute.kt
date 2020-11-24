@@ -8,7 +8,6 @@ import io.ktor.client.request.accept
 import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
-import io.ktor.http.HeadersBuilder
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.request.receive
@@ -16,12 +15,10 @@ import io.ktor.routing.Route
 import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.util.appendAll
-import io.ktor.util.filter
 import no.nav.omsorgspenger.NavConsumerToken
+import no.nav.omsorgspenger.addAndOverride
 import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.pipeResponse
-import no.nav.omsorgspenger.plus
-import no.nav.omsorgspenger.plusAll
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.json.simple.JSONObject
 
@@ -41,15 +38,12 @@ internal fun Route.PdlRoute(
             else
                 call.request.headers[HttpHeaders.Authorization]!!
 
-            val proxiedHeaders = call.request.headers.filter { key, _ ->
-                !key.equals(HttpHeaders.Authorization, ignoreCase = true) &&
-                    !key.equals(NavConsumerToken, ignoreCase = true)
-            }
-            val headersBuilder = HeadersBuilder()
-                .plusAll(proxiedHeaders)
-                .plus(HttpHeaders.Authorization, authToken)
-                .plus(NavConsumerToken, "Bearer $stsToken")
-
+            val headersBuilder = call.request.headers.addAndOverride(
+                mapOf(
+                    HttpHeaders.Authorization to authToken,
+                    NavConsumerToken to "Bearer $stsToken"
+                )
+            )
             val response = httpClient.post<HttpResponse>(pdlUrl) {
                 headers.appendAll(headersBuilder)
                 contentType(ContentType.Application.Json)

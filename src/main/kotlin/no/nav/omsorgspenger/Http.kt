@@ -9,7 +9,6 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.OutgoingContent
 import io.ktor.response.respond
-import io.ktor.util.StringValues
 import io.ktor.util.filter
 import io.ktor.utils.io.ByteWriteChannel
 import io.ktor.utils.io.copyAndClose
@@ -38,14 +37,18 @@ suspend fun ApplicationCall.pipeResponse(response: HttpResponse) {
     })
 }
 
-internal fun HeadersBuilder.plusAll(stringValues: StringValues): HeadersBuilder {
-    appendAll(stringValues)
-    return this
-}
+internal fun Headers.addAndOverride(headers: Map<String, String>): HeadersBuilder {
+    val proxiedHeaders = filter { key, _ ->
+        !headers.containsKey(key)
+    }
 
-internal fun HeadersBuilder.plus(name: String, value: String): HeadersBuilder {
-    append(name, value)
-    return this
+    val headersBuilder = HeadersBuilder()
+    headersBuilder.appendAll(proxiedHeaders)
+    headers.forEach {
+        headersBuilder.append(it.key, it.value)
+    }
+
+    return headersBuilder
 }
 
 val NavCallId: String

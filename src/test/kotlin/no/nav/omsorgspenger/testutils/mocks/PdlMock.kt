@@ -49,7 +49,7 @@ internal class TokenResponseTransformer(
         files: FileSource?,
         parameters: Parameters?
     ): Response {
-        val authorizationHeader = request.getHeader("Authorization")
+        val authorizationHeader = request.getHeader(io.ktor.http.HttpHeaders.Authorization)
         val navConsumerTokenHeader = request.getHeader(NavConsumerToken)
 
         val responseBody = if (authorizationHeader == navConsumerTokenHeader)
@@ -59,7 +59,7 @@ internal class TokenResponseTransformer(
 
         return Response.Builder.like(response)
             .status(200)
-            .headers(HttpHeaders(HttpHeader.httpHeader("Content-Type", "application/json; charset=UTF-8")))
+            .headers(HttpHeaders(HttpHeader.httpHeader(io.ktor.http.HttpHeaders.ContentType, "application/json; charset=UTF-8")))
             .body(responseBody)
             .build()
     }

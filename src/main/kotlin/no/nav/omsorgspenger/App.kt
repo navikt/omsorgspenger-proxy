@@ -13,7 +13,6 @@ import io.ktor.jackson.jackson
 import io.ktor.routing.Routing
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.dusseldorf.ktor.auth.AuthStatusPages
-import no.nav.helse.dusseldorf.ktor.auth.allIssuers
 import no.nav.helse.dusseldorf.ktor.auth.issuers
 import no.nav.helse.dusseldorf.ktor.auth.multipleJwtIssuers
 import no.nav.helse.dusseldorf.ktor.auth.withoutAdditionalClaimRules
@@ -21,6 +20,7 @@ import no.nav.helse.dusseldorf.ktor.core.DefaultProbeRoutes
 import no.nav.helse.dusseldorf.ktor.core.DefaultStatusPages
 import no.nav.helse.dusseldorf.ktor.core.fromXCorrelationIdHeader
 import no.nav.omsorgspenger.config.load
+import no.nav.omsorgspenger.routes.OppgaveRoute
 import no.nav.omsorgspenger.routes.PdlRoute
 import no.nav.omsorgspenger.sts.StsRestClient
 
@@ -64,6 +64,13 @@ fun Application.app() {
         DefaultProbeRoutes()
         authenticate(*azureAnyScoped) {
             PdlRoute(
+                config = config,
+                stsClient = stsClient,
+                httpClient = httpClient
+            )
+        }
+        authenticate(*azureProxyScoped) {
+            OppgaveRoute(
                 config = config,
                 stsClient = stsClient,
                 httpClient = httpClient
