@@ -20,10 +20,12 @@ import org.junit.jupiter.api.extension.ExtendWith
 internal class PdlRouteTest(
     private val testApplicationEngine: TestApplicationEngine
 ) {
+    private val pdlUrl = "/pdl/graphql/blabla"
+
     @Test
     internal fun `ingen token gir 401`() {
         with(testApplicationEngine) {
-            handleRequest(HttpMethod.Post, "/pdl") {}.apply {
+            handleRequest(HttpMethod.Post, pdlUrl) {}.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.Unauthorized)
             }
         }
@@ -32,7 +34,7 @@ internal class PdlRouteTest(
     @Test
     internal fun `token utstedt til oms-proxy proxyer request`() {
         with(testApplicationEngine) {
-            handleRequest(HttpMethod.Post, "/pdl") {
+            handleRequest(HttpMethod.Post, pdlUrl) {
                 addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken()}")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
@@ -47,7 +49,7 @@ internal class PdlRouteTest(
     @Test
     internal fun `token med annen audience propagerer auth header og proxyer request`() {
         with(testApplicationEngine) {
-            handleRequest(HttpMethod.Post, "/pdl") {
+            handleRequest(HttpMethod.Post, pdlUrl) {
                 addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken("ikke-omsorgspenger-proxy")}")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")

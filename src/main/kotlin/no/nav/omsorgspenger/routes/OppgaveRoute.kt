@@ -7,6 +7,7 @@ import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpHeaders
 import io.ktor.request.receive
+import io.ktor.request.uri
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -23,10 +24,11 @@ internal fun Route.OppgaveRoute(
     config: Config,
     stsClient: StsRestClient
 ) {
-    route("/oppgave") {
+    route("/oppgave/{path...}") {
         val oppgaveUrl = config.oppgave.url
 
         post {
+            val path = call.request.uri.removePrefix("/oppgave")
             val stsToken = stsClient.token()
             val headersBuilder = call.request.headers.addAndOverride(
                 mapOf(
@@ -34,7 +36,7 @@ internal fun Route.OppgaveRoute(
                 )
             )
 
-            val response = httpClient.post<HttpResponse>(oppgaveUrl) {
+            val response = httpClient.post<HttpResponse>("$oppgaveUrl/$path") {
                 headers.appendAll(headersBuilder)
                 body = call.receive<JSONObject>()
             }
@@ -43,13 +45,14 @@ internal fun Route.OppgaveRoute(
 
         get {
             val stsToken = stsClient.token()
+            val path = call.request.uri.removePrefix("/oppgave")
             val headersBuilder = call.request.headers.addAndOverride(
                 mapOf(
                     HttpHeaders.Authorization to "Bearer $stsToken"
                 )
             )
 
-            val response = httpClient.get<HttpResponse>(oppgaveUrl) {
+            val response = httpClient.get<HttpResponse>("$oppgaveUrl/$path") {
                 headers.appendAll(headersBuilder)
             }
             call.pipeResponse(response)

@@ -11,6 +11,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.request.receive
+import io.ktor.request.uri
 import io.ktor.routing.Route
 import io.ktor.routing.post
 import io.ktor.routing.route
@@ -27,9 +28,10 @@ internal fun Route.PdlRoute(
     stsClient: StsRestClient,
     httpClient: HttpClient
 ) {
-    route("/pdl") {
+    route("/pdl/{path...}") {
         post {
             val pdlUrl = config.pdl.url
+            val path = call.request.uri.removePrefix("/pdl")
             val stsToken = stsClient.token()
             val jwt = call.principal<JWTPrincipal>()!!
 
@@ -44,7 +46,7 @@ internal fun Route.PdlRoute(
                     NavConsumerToken to "Bearer $stsToken"
                 )
             )
-            val response = httpClient.post<HttpResponse>(pdlUrl) {
+            val response = httpClient.post<HttpResponse>("$pdlUrl/$path") {
                 headers.appendAll(headersBuilder)
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)

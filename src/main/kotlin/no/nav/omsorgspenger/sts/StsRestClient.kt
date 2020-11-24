@@ -15,10 +15,10 @@ import io.ktor.util.toByteArray
 import no.nav.helse.dusseldorf.ktor.health.HealthCheck
 import no.nav.helse.dusseldorf.ktor.health.Healthy
 import no.nav.helse.dusseldorf.ktor.health.UnHealthy
+import no.nav.omsorgspenger.config.Config
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
-import no.nav.omsorgspenger.config.Config
 
 internal class StsRestClient(
     private val stsTokenUrl: String,

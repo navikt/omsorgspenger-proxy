@@ -16,10 +16,12 @@ import org.junit.jupiter.api.extension.ExtendWith
 internal class OppgaveRouteTest(
     private val testApplicationEngine: TestApplicationEngine
 ) {
+    private val oppgaveUrl = "/oppgave/api/v1/blabla"
+
     @Test
     internal fun `ingen token gir 401`() {
         with(testApplicationEngine) {
-            handleRequest(HttpMethod.Get, "/oppgave") {}.apply {
+            handleRequest(HttpMethod.Get, oppgaveUrl) {}.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.Unauthorized)
             }
         }
@@ -28,7 +30,7 @@ internal class OppgaveRouteTest(
     @Test
     internal fun `GET - token utstedt til oms-proxy proxyer request`() {
         with(testApplicationEngine) {
-            handleRequest(HttpMethod.Get, "/oppgave") {
+            handleRequest(HttpMethod.Get, oppgaveUrl) {
                 addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken()}")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
@@ -42,7 +44,7 @@ internal class OppgaveRouteTest(
     @Test
     internal fun `POST - token utstedt til oms-proxy proxyer request`() {
         with(testApplicationEngine) {
-            handleRequest(HttpMethod.Post, "/oppgave") {
+            handleRequest(HttpMethod.Post, oppgaveUrl) {
                 addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken()}")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
@@ -57,7 +59,7 @@ internal class OppgaveRouteTest(
     @Test
     internal fun `token scopet til annen tjeneste gir 403`() {
         with(testApplicationEngine) {
-            handleRequest(HttpMethod.Get, "/oppgave") {
+            handleRequest(HttpMethod.Get, oppgaveUrl) {
                 addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(audience = "ikke-oms-proxy")}")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
