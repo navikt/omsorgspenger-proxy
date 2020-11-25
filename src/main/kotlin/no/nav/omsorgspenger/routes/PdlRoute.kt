@@ -7,7 +7,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpHeaders
-import io.ktor.request.receive
+import io.ktor.request.receiveStream
 import io.ktor.request.uri
 import io.ktor.routing.Route
 import io.ktor.routing.post
@@ -18,7 +18,6 @@ import no.nav.omsorgspenger.addAndOverride
 import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.pipeResponse
 import no.nav.omsorgspenger.sts.StsRestClient
-import org.json.simple.JSONObject
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("PdlRoute")
@@ -51,7 +50,7 @@ internal fun Route.PdlRoute(
             logger.info("request headers: ${headersBuilder.names().joinToString()}")
             val response = httpClient.post<HttpResponse>(fullPdlPath) {
                 headers.appendAll(headersBuilder)
-                body = call.receive<JSONObject>()
+                body = call.receiveStream()
             }
             logger.info("pdl response headers: ${response.headers.names().joinToString()}")
             logger.info("status fra pdl: ${response.status.value}")
