@@ -4,12 +4,9 @@ import io.ktor.application.call
 import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.principal
 import io.ktor.client.HttpClient
-import io.ktor.client.request.accept
 import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
-import io.ktor.http.contentType
 import io.ktor.request.receive
 import io.ktor.request.uri
 import io.ktor.routing.Route
@@ -48,8 +45,6 @@ internal fun Route.PdlRoute(
             )
             val response = httpClient.post<HttpResponse>("$pdlUrl$path") {
                 headers.appendAll(headersBuilder)
-                contentType(ContentType.Application.Json)
-                accept(ContentType.Application.Json)
                 body = call.receive<JSONObject>()
             }
             call.pipeResponse(response)
