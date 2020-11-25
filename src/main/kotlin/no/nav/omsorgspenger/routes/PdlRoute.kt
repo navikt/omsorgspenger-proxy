@@ -28,7 +28,7 @@ internal fun Route.PdlRoute(
     stsClient: StsRestClient,
     httpClient: HttpClient
 ) {
-    route("/pdl/{path...}") {
+    route("/pdl{...}") {
         post {
             val pdlUrl = config.pdl.url
             val path = call.request.uri.removePrefix("/pdl")
@@ -46,7 +46,7 @@ internal fun Route.PdlRoute(
                     NavConsumerToken to "Bearer $stsToken"
                 )
             )
-            val response = httpClient.post<HttpResponse>("$pdlUrl/$path") {
+            val response = httpClient.post<HttpResponse>("$pdlUrl$path") {
                 headers.appendAll(headersBuilder)
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)

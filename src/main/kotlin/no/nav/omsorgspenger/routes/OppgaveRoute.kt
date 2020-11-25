@@ -24,7 +24,7 @@ internal fun Route.OppgaveRoute(
     config: Config,
     stsClient: StsRestClient
 ) {
-    route("/oppgave/{path...}") {
+    route("/oppgave{...}") {
         val oppgaveUrl = config.oppgave.url
 
         post {
@@ -36,7 +36,7 @@ internal fun Route.OppgaveRoute(
                 )
             )
 
-            val response = httpClient.post<HttpResponse>("$oppgaveUrl/$path") {
+            val response = httpClient.post<HttpResponse>("$oppgaveUrl$path") {
                 headers.appendAll(headersBuilder)
                 body = call.receive<JSONObject>()
             }
@@ -52,7 +52,7 @@ internal fun Route.OppgaveRoute(
                 )
             )
 
-            val response = httpClient.get<HttpResponse>("$oppgaveUrl/$path") {
+            val response = httpClient.get<HttpResponse>("$oppgaveUrl$path") {
                 headers.appendAll(headersBuilder)
             }
             call.pipeResponse(response)
