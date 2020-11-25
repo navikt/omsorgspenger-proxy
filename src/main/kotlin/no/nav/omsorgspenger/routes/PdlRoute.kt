@@ -48,6 +48,7 @@ internal fun Route.PdlRoute(
                     NavConsumerToken to "Bearer $stsToken"
                 )
             )
+            logger.info("request headers: ${headersBuilder.names().joinToString()}")
             val response = httpClient.post<HttpResponse>(fullPdlPath) {
                 headers.appendAll(headersBuilder)
                 body = call.receive<JSONObject>()
