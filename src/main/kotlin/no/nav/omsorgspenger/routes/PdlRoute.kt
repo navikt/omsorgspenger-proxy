@@ -19,6 +19,9 @@ import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.pipeResponse
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.json.simple.JSONObject
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("PdlRoute")
 
 internal fun Route.PdlRoute(
     config: Config,
@@ -29,6 +32,8 @@ internal fun Route.PdlRoute(
         post {
             val pdlUrl = config.pdl.url
             val path = call.request.uri.removePrefix("/pdl")
+            val fullPdlPath = "$pdlUrl$path"
+            logger.info("proxyer kall mot $fullPdlPath")
             val stsToken = stsClient.token()
             val jwt = call.principal<JWTPrincipal>()!!
 
@@ -43,10 +48,11 @@ internal fun Route.PdlRoute(
                     NavConsumerToken to "Bearer $stsToken"
                 )
             )
-            val response = httpClient.post<HttpResponse>("$pdlUrl$path") {
+            val response = httpClient.post<HttpResponse>(fullPdlPath) {
                 headers.appendAll(headersBuilder)
                 body = call.receive<JSONObject>()
             }
+            logger.info("status fra pdl: ${response.status.value}")
             call.pipeResponse(response)
         }
     }
