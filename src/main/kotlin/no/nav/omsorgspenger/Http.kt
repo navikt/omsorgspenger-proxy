@@ -16,10 +16,8 @@ import io.ktor.utils.io.copyAndClose
 suspend fun ApplicationCall.pipeResponse(response: HttpResponse) {
     val proxiedHeaders = response.headers
     val contentType = proxiedHeaders[HttpHeaders.ContentType]
-    val contentLength = proxiedHeaders[HttpHeaders.ContentLength]
 
     respond(object : OutgoingContent.WriteChannelContent() {
-        override val contentLength: Long? = contentLength?.toLong()
         override val contentType: ContentType? = contentType?.let { ContentType.parse(it) }
         override val headers: Headers = Headers.build {
             appendAll(
