@@ -53,6 +53,7 @@ internal fun Route.PdlRoute(
                 headers.appendAll(headersBuilder)
                 body = call.receive<JSONObject>()
             }
+            logger.info("pdl response headers: ${response.headers.names().joinToString()}")
             logger.info("status fra pdl: ${response.status.value}")
             call.pipeResponse(response)
         }
