@@ -16,7 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 internal class OppgaveRouteTest(
     private val testApplicationEngine: TestApplicationEngine
 ) {
-    private val oppgaveUrl = "/oppgave/api/v1/blabla"
+    private val oppgaveUrl = "/oppgave/api/v1/blabla?testparam=any"
 
     @Test
     internal fun `ingen token gir 401`() {

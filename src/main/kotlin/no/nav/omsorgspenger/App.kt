@@ -71,15 +71,13 @@ fun Application.app() {
         authenticate(*azureAnyScoped) {
             PdlRoute(
                 config = config,
-                stsClient = stsClient,
-                httpClient = httpClient
+                stsClient = stsClient
             )
         }
         authenticate(*azureProxyScoped) {
             OppgaveRoute(
                 config = config,
-                stsClient = stsClient,
-                httpClient = httpClient
+                stsClient = stsClient
             )
         }
     }

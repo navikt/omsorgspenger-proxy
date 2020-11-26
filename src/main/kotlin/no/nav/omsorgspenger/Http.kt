@@ -1,54 +1,102 @@
 package no.nav.omsorgspenger
 
+import com.github.kittinunf.fuel.core.Request
+import com.github.kittinunf.fuel.core.Response
+import com.github.kittinunf.fuel.coroutines.awaitByteArrayResponseResult
+import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.fuel.httpPost
 import io.ktor.application.ApplicationCall
-import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.Headers
-import io.ktor.http.HeadersBuilder
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.content.OutgoingContent
+import io.ktor.http.Parameters
+import io.ktor.request.receive
+import io.ktor.response.header
 import io.ktor.response.respond
-import io.ktor.util.filter
-import io.ktor.utils.io.ByteWriteChannel
-import io.ktor.utils.io.copyAndClose
+import io.ktor.response.respondBytes
+import org.slf4j.Logger
 
-suspend fun ApplicationCall.pipeResponse(response: HttpResponse) {
-    val proxiedHeaders = response.headers
-    val contentType = proxiedHeaders[HttpHeaders.ContentType]
-    val contentLength = proxiedHeaders[HttpHeaders.ContentLength]
+internal suspend fun ApplicationCall.forwardPost(toUrl: String, extraHeaders: Map<String, Any>, logger: Logger) {
+    val parameters = request.queryParameters.toFuel()
+    val postRequest = toUrl
+        .httpPost(parameters)
+        .body(receive<ByteArray>())
 
-    respond(object : OutgoingContent.WriteChannelContent() {
-        override val contentLength: Long? = contentLength?.toLong()
-        override val contentType: ContentType? = contentType?.let { ContentType.parse(it) }
-        override val headers: Headers = Headers.build {
-            appendAll(
-                proxiedHeaders.filter { key, _ ->
-                    !key.equals(HttpHeaders.ContentType, ignoreCase = true) &&
-                        !key.equals(HttpHeaders.ContentLength, ignoreCase = true) &&
-                        !key.equals(HttpHeaders.TransferEncoding, ignoreCase = true)
-                }
-            )
-        }
-        override val status: HttpStatusCode? = response.status
-        override suspend fun writeTo(channel: ByteWriteChannel) {
-            response.content.copyAndClose(channel)
-        }
-    })
+    forwardRequest(postRequest, extraHeaders, logger)
 }
 
-internal fun Headers.addAndOverride(headers: Map<String, String>): HeadersBuilder {
-    val proxiedHeaders = filter { key, _ ->
-        !headers.containsKey(key) && key != HttpHeaders.ContentLength
-    }
+internal suspend fun ApplicationCall.forwardGet(toUrl: String, extraHeaders: Map<String, Any>, logger: Logger) {
+    val parameters = request.queryParameters.toFuel()
+    val postRequest = toUrl
+        .httpGet(parameters)
 
-    val headersBuilder = HeadersBuilder()
-    headersBuilder.appendAll(proxiedHeaders)
-    headers.forEach {
-        headersBuilder.append(it.key, it.value)
-    }
+    forwardRequest(postRequest, extraHeaders, logger)
+}
 
-    return headersBuilder
+private suspend fun ApplicationCall.forwardRequest(fuelRequest: Request, extraHeaders: Map<String, Any>, logger: Logger) {
+    val httpRequest = fuelRequest
+        .header(request.headers.toMap(extraHeaders))
+        .timeout(20_000)
+        .timeoutRead(20_000)
+
+    val (_, response, result) = httpRequest.awaitByteArrayResponseResult()
+    result.fold(
+        { success -> forward(response, success) },
+        { failure ->
+            if (-1 == response.statusCode) {
+                logger.error(failure.toString())
+                respondErrorAndLog(HttpStatusCode.GatewayTimeout, "Unable to proxy request.", logger)
+            } else {
+                forward(response, failure.errorData)
+            }
+        }
+    )
+}
+
+private fun Headers.toMap(extraHeaders: Map<String, Any>): Map<String, Any> {
+    val fuelHeaders = mutableMapOf<String, Any>()
+    forEach { key, values ->
+        fuelHeaders[key] = values
+    }
+    extraHeaders.forEach {
+        fuelHeaders[it.key] = it.value
+    }
+    return fuelHeaders.toMap()
+}
+
+internal fun Parameters.toFuel(): List<Pair<String, Any?>> {
+    val fuelParameters = mutableListOf<Pair<String, Any?>>()
+    forEach { key, value ->
+        value.forEach { fuelParameters.add(key to it) }
+    }
+    return fuelParameters.toList()
+}
+
+private suspend fun ApplicationCall.forward(
+    clientResponse: Response,
+    body: ByteArray
+) {
+    clientResponse.headers.forEach { key, value ->
+        if (!HttpHeaders.isUnsafe(key)) {
+            value.forEach { response.header(key, it) }
+        }
+    }
+    respondBytes(
+        bytes = body,
+        status = HttpStatusCode.fromValue(clientResponse.statusCode),
+        contentType = clientResponse.contentType()
+    )
+}
+
+private fun Response.contentType(): ContentType {
+    val clientContentTypesHeaders = header(HttpHeaders.ContentType)
+    return if (clientContentTypesHeaders.isEmpty()) ContentType.Text.Plain else ContentType.parse(clientContentTypesHeaders.first())
+}
+
+private suspend fun ApplicationCall.respondErrorAndLog(status: HttpStatusCode, error: String, logger: Logger) {
+    logger.error("HTTP $status -> $error")
+    respond(status, error)
 }
 
 val NavCallId: String
