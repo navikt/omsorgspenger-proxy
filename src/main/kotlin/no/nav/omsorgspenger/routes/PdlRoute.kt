@@ -26,17 +26,17 @@ internal fun Route.PdlRoute(
             val path = call.request.uri.removePrefix("/pdl")
             val fullPdlPath = "$pdlUrl$path"
             logger.info("proxyer kall mot $fullPdlPath")
-            val stsToken = stsClient.token()
+            val stsToken = stsClient.token().asAuthoriationHeader()
             val jwt = call.principal<JWTPrincipal>()!!
 
             val authToken = if (jwt.erScopetTilOmsorgspengerProxy(config.auth.azureAppClientId))
-                "Bearer $stsToken"
+                stsToken
             else
                 call.request.headers[HttpHeaders.Authorization]!!
 
             val extraHeaders = mapOf(
                 HttpHeaders.Authorization to authToken,
-                NavConsumerToken to stsToken.asAuthoriationHeader()
+                NavConsumerToken to stsToken
             )
 
             call.forwardPost(fullPdlPath, extraHeaders, logger)
