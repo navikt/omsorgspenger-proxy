@@ -4,9 +4,6 @@ import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.apache.Apache
-import io.ktor.client.features.json.JsonFeature
 import io.ktor.features.CallId
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
@@ -24,8 +21,6 @@ import no.nav.omsorgspenger.config.load
 import no.nav.omsorgspenger.routes.OppgaveRoute
 import no.nav.omsorgspenger.routes.PdlRoute
 import no.nav.omsorgspenger.sts.StsRestClient
-import org.apache.http.impl.conn.SystemDefaultRoutePlanner
-import java.net.ProxySelector
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -53,17 +48,9 @@ fun Application.app() {
         multipleJwtIssuers(issuers)
     }
 
-    val httpClient = HttpClient(Apache) {
-        engine {
-            customizeClient { setRoutePlanner(SystemDefaultRoutePlanner(ProxySelector.getDefault())) }
-        }
-        install(JsonFeature)
-    }
-
     val stsClient = StsRestClient(
         stsTokenUrl = config.sts.url,
-        serviceUser = config.serviceUser,
-        httpClient = httpClient
+        serviceUser = config.serviceUser
     )
 
     install(Routing) {
