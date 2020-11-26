@@ -12,6 +12,8 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
 import io.ktor.jackson.jackson
 import io.ktor.routing.Routing
+import io.ktor.routing.get
+import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.dusseldorf.ktor.auth.AuthStatusPages
 import no.nav.helse.dusseldorf.ktor.auth.issuers
@@ -25,7 +27,11 @@ import no.nav.omsorgspenger.routes.OppgaveRoute
 import no.nav.omsorgspenger.routes.PdlRoute
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
+import org.slf4j.LoggerFactory
 import java.net.ProxySelector
+import java.net.URL
+
+private val logger = LoggerFactory.getLogger("TestLogger")
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -81,6 +87,21 @@ fun Application.app() {
                 stsClient = stsClient,
                 httpClient = httpClient
             )
+        }
+
+        route("/test") {
+            get {
+                try {
+                    val text = URL("https://oppgave.nais.preprod.local/api/v1/oppgaver?aktoerId=2036800349231&limit=10&offset=10").readText()
+                    logger.info("text: $text")
+//                    val connection = URL("https://oppgave.nais.preprod.local/api/v1/oppgaver?aktoerId=2036800349231&limit=10&offset=10").openConnection()
+//                    val respHeaders = connection.headerFields.keys.joinToString()
+//                    logger.info(connection.content as String)
+//                    logger.info(respHeaders)
+                } catch (e: Exception) {
+                    logger.info(e.message)
+                }
+            }
         }
     }
 }
