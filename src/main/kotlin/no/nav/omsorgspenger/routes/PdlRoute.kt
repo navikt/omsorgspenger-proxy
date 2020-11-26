@@ -36,7 +36,7 @@ internal fun Route.PdlRoute(
 
             val extraHeaders = mapOf(
                 HttpHeaders.Authorization to authToken,
-                NavConsumerToken to "Bearer $stsToken"
+                NavConsumerToken to stsToken.asAuthoriationHeader()
             )
 
             call.forwardPost(fullPdlPath, extraHeaders, logger)
