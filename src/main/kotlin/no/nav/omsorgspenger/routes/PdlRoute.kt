@@ -6,10 +6,12 @@ import io.ktor.auth.principal
 import io.ktor.http.HttpHeaders
 import io.ktor.request.uri
 import io.ktor.routing.Route
+import io.ktor.routing.options
 import io.ktor.routing.post
 import io.ktor.routing.route
 import no.nav.omsorgspenger.NavConsumerToken
 import no.nav.omsorgspenger.config.Config
+import no.nav.omsorgspenger.forwardOptions
 import no.nav.omsorgspenger.forwardPost
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.slf4j.LoggerFactory
@@ -40,6 +42,18 @@ internal fun Route.PdlRoute(
             )
 
             call.forwardPost(fullPdlPath, extraHeaders, logger)
+        }
+
+        options {
+            val pdlUrl = config.pdl.url
+            val path = call.request.uri.removePrefix("/pdl")
+            val fullPdlPath = "$pdlUrl$path"
+            logger.info("proxyer optionskall mot $fullPdlPath")
+            val stsToken = stsClient.token().asAuthoriationHeader()
+
+            val extraHeaders = mapOf(HttpHeaders.Authorization to stsToken)
+
+            call.forwardOptions(fullPdlPath, extraHeaders, logger)
         }
     }
 }
