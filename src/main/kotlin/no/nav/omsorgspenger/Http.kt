@@ -1,5 +1,7 @@
 package no.nav.omsorgspenger
 
+import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.core.Method
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.Response
 import com.github.kittinunf.fuel.coroutines.awaitByteArrayResponseResult
@@ -32,6 +34,13 @@ internal suspend fun ApplicationCall.forwardGet(toUrl: String, extraHeaders: Map
         .httpGet(parameters)
 
     forwardRequest(postRequest, extraHeaders, logger)
+}
+
+internal suspend fun ApplicationCall.forwardOptions(toUrl: String, extraHeaders: Map<String, Any>, logger: Logger) {
+    val parameters = request.queryParameters.toFuel()
+    val optionsRequest = Fuel.request(Method.OPTIONS, toUrl, parameters)
+
+    forwardRequest(optionsRequest, extraHeaders, logger)
 }
 
 private suspend fun ApplicationCall.forwardRequest(fuelRequest: Request, extraHeaders: Map<String, Any>, logger: Logger) {
