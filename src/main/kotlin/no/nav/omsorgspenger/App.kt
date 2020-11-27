@@ -17,6 +17,10 @@ import no.nav.helse.dusseldorf.ktor.auth.withoutAdditionalClaimRules
 import no.nav.helse.dusseldorf.ktor.core.DefaultProbeRoutes
 import no.nav.helse.dusseldorf.ktor.core.DefaultStatusPages
 import no.nav.helse.dusseldorf.ktor.core.fromXCorrelationIdHeader
+import no.nav.helse.dusseldorf.ktor.health.HealthReporter
+import no.nav.helse.dusseldorf.ktor.health.HealthRoute
+import no.nav.helse.dusseldorf.ktor.health.HealthService
+import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
 import no.nav.omsorgspenger.config.load
 import no.nav.omsorgspenger.routes.OppgaveRoute
 import no.nav.omsorgspenger.routes.PdlRoute
@@ -52,8 +56,20 @@ fun Application.app() {
         stsTokenUrl = config.sts.url,
         serviceUser = config.serviceUser
     )
+    val healthService = HealthService(
+        setOf(
+            stsClient
+        )
+    )
+
+    HealthReporter(
+        "omsorgspenger-proxy",
+        healthService
+    )
 
     install(Routing) {
+        HealthRoute(healthService = healthService)
+        MetricsRoute()
         DefaultProbeRoutes()
         authenticate(*azureAnyScoped) {
             PdlRoute(
