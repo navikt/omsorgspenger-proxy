@@ -24,19 +24,19 @@ internal fun Route.OppgaveRoute(
 
         post {
             val path = call.request.uri.removePrefix("/oppgave")
-            val stsToken = stsClient.token()
+            val stsToken = stsClient.token().asAuthoriationHeader()
             val extraHeaders = mapOf(
-                HttpHeaders.Authorization to "Bearer $stsToken"
+                HttpHeaders.Authorization to stsToken
             )
 
             call.forwardPost("$oppgaveUrl$path", extraHeaders, logger)
         }
 
         get {
-            val stsToken = stsClient.token()
+            val stsToken = stsClient.token().asAuthoriationHeader()
             val path = call.request.uri.removePrefix("/oppgave")
             val extraHeaders = mapOf(
-                HttpHeaders.Authorization to "Bearer $stsToken"
+                HttpHeaders.Authorization to stsToken
             )
 
             call.forwardGet("$oppgaveUrl$path", extraHeaders, logger)
