@@ -35,7 +35,7 @@ internal class PdlRouteTest(
     fun `token utstedt til oms-proxy proxyer request`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Post, pdlUrl) {
-                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken()}")
+                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(clientId = "allowed-1")}")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
                 setBody("{}")
@@ -50,7 +50,7 @@ internal class PdlRouteTest(
     fun `token med annen audience propagerer auth header og proxyer request`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Post, pdlUrl) {
-                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken("ikke-omsorgspenger-proxy")}")
+                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(audience = "ikke-omsorgspenger-proxy")}")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
                 setBody("{}")
@@ -62,7 +62,9 @@ internal class PdlRouteTest(
     }
 }
 
-internal fun azureIssuerToken(audience: String = azureAppClientId) = Azure.V2_0.generateJwt(
-    clientId = "any",
+internal fun azureIssuerToken(
+    clientId: String = "any",
+    audience: String = azureAppClientId) = Azure.V2_0.generateJwt(
+    clientId = clientId,
     audience = audience
 )

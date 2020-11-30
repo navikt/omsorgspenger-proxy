@@ -40,6 +40,7 @@ internal class MockedEnvironment(
         appConfig["nav.auth.issuers.1.alias"] = "azure_any_scoped"
         appConfig["nav.auth.issuers.1.discovery_endpoint"] = wireMockServer.getAzureV2WellKnownUrl()
         appConfig["nav.auth.azure_app_client_id"] = azureAppClientId
+        appConfig["nav.auth.azure_app_authorized_client_ids"] = "allowed-1,allowed-2"
     }
 
     internal fun start() = this

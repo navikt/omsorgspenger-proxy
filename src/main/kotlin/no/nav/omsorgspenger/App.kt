@@ -9,9 +9,7 @@ import io.ktor.request.*
 import io.ktor.routing.Routing
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.dusseldorf.ktor.auth.AuthStatusPages
-import no.nav.helse.dusseldorf.ktor.auth.issuers
 import no.nav.helse.dusseldorf.ktor.auth.multipleJwtIssuers
-import no.nav.helse.dusseldorf.ktor.auth.withoutAdditionalClaimRules
 import no.nav.helse.dusseldorf.ktor.core.DefaultProbeRoutes
 import no.nav.helse.dusseldorf.ktor.core.DefaultStatusPages
 import no.nav.helse.dusseldorf.ktor.core.id
@@ -19,6 +17,9 @@ import no.nav.helse.dusseldorf.ktor.health.HealthReporter
 import no.nav.helse.dusseldorf.ktor.health.HealthRoute
 import no.nav.helse.dusseldorf.ktor.health.HealthService
 import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
+import no.nav.omsorgspenger.Auth.azureAnyScoped
+import no.nav.omsorgspenger.Auth.azureProxyScoped
+import no.nav.omsorgspenger.Auth.omsorgspengerProxyIssuers
 import no.nav.omsorgspenger.config.load
 import no.nav.omsorgspenger.routes.OppgaveRoute
 import no.nav.omsorgspenger.routes.PdlRoute
@@ -51,7 +52,7 @@ fun Application.app() {
         callIdMdc("correlation_id")
     }
 
-    val issuers = environment.config.issuers().withoutAdditionalClaimRules()
+    val issuers = environment.config.omsorgspengerProxyIssuers()
 
     install(Authentication) {
         multipleJwtIssuers(issuers)

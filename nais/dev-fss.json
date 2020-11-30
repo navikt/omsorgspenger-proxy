@@ -13,6 +13,7 @@
   "env": {
     "STS_TOKEN_URL": "https://security-token-service.nais.preprod.local/rest/v1/sts/token",
     "PDL_BASE_URL": "https://pdl-api.nais.preprod.local",
-    "OPPGAVE_BASE_URL": "https://oppgave.nais.preprod.local"
+    "OPPGAVE_BASE_URL": "https://oppgave.nais.preprod.local",
+    "AZURE_APP_AUTHORIZED_CLIENT_IDS": ""
   }
 }
