@@ -76,13 +76,13 @@ fun Application.app() {
         HealthRoute(healthService = healthService)
         MetricsRoute()
         DefaultProbeRoutes()
-        authenticate(*azureAnyScoped) {
+        authenticate(*issuers.azureAnyScoped()) {
             PdlRoute(
                 config = config,
                 stsClient = stsClient
             )
         }
-        authenticate(*azureProxyScoped) {
+        authenticate(*issuers.azureProxyScoped()) {
             OppgaveRoute(
                 config = config,
                 stsClient = stsClient
