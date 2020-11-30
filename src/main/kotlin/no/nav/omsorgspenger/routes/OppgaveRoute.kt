@@ -13,7 +13,7 @@ import no.nav.omsorgspenger.forwardPost
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.slf4j.LoggerFactory
 
-private val logger = LoggerFactory.getLogger("OppgaveRoute")
+private val logger = LoggerFactory.getLogger("no.nav.OppgaveRoute")
 
 internal fun Route.OppgaveRoute(
     config: Config,

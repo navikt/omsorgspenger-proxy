@@ -47,6 +47,21 @@ internal class PdlRouteTest(
     }
 
     @Test
+    fun `token utstedt til oms-proxy men ikke allowed client feiler`() {
+        with(testApplicationEngine) {
+            handleRequest(HttpMethod.Post, pdlUrl) {
+                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(clientId = "not-allowed")}")
+                addHeader(HttpHeaders.ContentType, "application/json")
+                addHeader(ProxiedHeader, "anything")
+                setBody("{}")
+            }.apply {
+                assertThat(response.status()).isEqualTo(HttpStatusCode.Forbidden)
+            }
+        }
+    }
+
+
+    @Test
     fun `token med annen audience propagerer auth header og proxyer request`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Post, pdlUrl) {

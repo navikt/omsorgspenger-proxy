@@ -2,7 +2,6 @@ package no.nav.omsorgspenger.config
 
 import io.ktor.config.ApplicationConfig
 import io.ktor.util.KtorExperimentalAPI
-import java.util.Base64
 
 internal data class Config(
     val serviceUser: ServiceUser,
@@ -14,13 +13,7 @@ internal data class Config(
     internal data class ServiceUser(
         val username: String,
         val password: String
-    ) {
-        val basicAuth = "Basic ${Base64.getEncoder().encodeToString("$username:$password".toByteArray(Charsets.UTF_8))}"
-
-        override fun toString(): String {
-            return "username:$username,password:$<SECRET>"
-        }
-    }
+    )
 
     internal data class PDL(
         val url: String

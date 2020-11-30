@@ -1,7 +1,6 @@
 package no.nav.omsorgspenger.routes
 
 import io.ktor.application.call
-import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.http.HttpHeaders
 import io.ktor.request.uri
 import io.ktor.routing.Route
@@ -16,7 +15,7 @@ import no.nav.omsorgspenger.forwardPost
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.slf4j.LoggerFactory
 
-private val logger = LoggerFactory.getLogger("PdlRoute")
+private val logger = LoggerFactory.getLogger("no.nav.PdlRoute")
 
 internal fun Route.PdlRoute(
     config: Config,
