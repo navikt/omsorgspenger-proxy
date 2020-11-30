@@ -19,7 +19,7 @@ internal class OppgaveRouteTest(
     private val oppgaveUrl = "/oppgave/api/v1/blabla?testparam=any"
 
     @Test
-    internal fun `ingen token gir 401`() {
+    fun `ingen token gir 401`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Get, oppgaveUrl) {}.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.Unauthorized)
@@ -28,7 +28,7 @@ internal class OppgaveRouteTest(
     }
 
     @Test
-    internal fun `GET - token utstedt til oms-proxy proxyer request`() {
+    fun `GET - token utstedt til oms-proxy proxyer request`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Get, oppgaveUrl) {
                 addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken()}")
@@ -42,7 +42,7 @@ internal class OppgaveRouteTest(
     }
 
     @Test
-    internal fun `POST - token utstedt til oms-proxy proxyer request`() {
+    fun `POST - token utstedt til oms-proxy proxyer request`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Post, oppgaveUrl) {
                 addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken()}")
@@ -57,7 +57,7 @@ internal class OppgaveRouteTest(
     }
 
     @Test
-    internal fun `token scopet til annen tjeneste gir 403`() {
+    fun `token scopet til annen tjeneste gir 403`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Get, oppgaveUrl) {
                 addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(audience = "ikke-oms-proxy")}")

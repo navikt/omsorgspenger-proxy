@@ -23,7 +23,7 @@ internal class PdlRouteTest(
     private val pdlUrl = "/pdl/graphql/blabla"
 
     @Test
-    internal fun `ingen token gir 401`() {
+    fun `ingen token gir 401`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Post, pdlUrl) {}.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.Unauthorized)
@@ -32,7 +32,7 @@ internal class PdlRouteTest(
     }
 
     @Test
-    internal fun `token utstedt til oms-proxy proxyer request`() {
+    fun `token utstedt til oms-proxy proxyer request`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Post, pdlUrl) {
                 addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken()}")
@@ -47,7 +47,7 @@ internal class PdlRouteTest(
     }
 
     @Test
-    internal fun `token med annen audience propagerer auth header og proxyer request`() {
+    fun `token med annen audience propagerer auth header og proxyer request`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Post, pdlUrl) {
                 addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken("ikke-omsorgspenger-proxy")}")

@@ -17,7 +17,9 @@ import io.ktor.request.receive
 import io.ktor.response.header
 import io.ktor.response.respond
 import io.ktor.response.respondBytes
+import io.ktor.util.*
 import org.slf4j.Logger
+import java.util.*
 
 internal suspend fun ApplicationCall.forwardPost(toUrl: String, extraHeaders: Map<String, Any>, logger: Logger) {
     val parameters = request.queryParameters.toFuel()
@@ -108,9 +110,16 @@ private suspend fun ApplicationCall.respondErrorAndLog(status: HttpStatusCode, e
     respond(status, error)
 }
 
-val NavCallId: String
-    get() = "Nav-Call-Id"
-val NavConsumerId: String
-    get() = "Nav-Consumer-Id"
-val NavConsumerToken: String
-    get() = "Nav-Consumer-Token"
+internal fun ApplicationCall.getCorrelationId() = request
+    .headers
+    .flattenEntries()
+    .firstOrNull { (headerName, headerValue) ->
+        headerName.toUpperCase() in SupportedCorrelationIdHeaders && headerValue.isNotBlank()
+    }?.second ?: "proxy-${UUID.randomUUID()}"
+
+private val SupportedCorrelationIdHeaders = listOf(
+    HttpHeaders.XCorrelationId,
+    "Nav-Call-Id"
+).map { it.toUpperCase() }
+
+internal const val NavConsumerToken = "Nav-Consumer-Token"

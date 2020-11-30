@@ -27,7 +27,7 @@ internal fun Route.PdlRoute(
             val pdlUrl = config.pdl.url
             val path = call.request.uri.removePrefix("/pdl")
             val fullPdlPath = "$pdlUrl$path"
-            logger.info("proxyer kall mot $fullPdlPath")
+
             val stsToken = stsClient.token().asAuthoriationHeader()
             val jwt = call.principal<JWTPrincipal>()!!
 
@@ -48,7 +48,7 @@ internal fun Route.PdlRoute(
             val pdlUrl = config.pdl.url
             val path = call.request.uri.removePrefix("/pdl")
             val fullPdlPath = "$pdlUrl$path"
-            logger.info("proxyer optionskall mot $fullPdlPath")
+
             val stsToken = stsClient.token().asAuthoriationHeader()
 
             val extraHeaders = mapOf(HttpHeaders.Authorization to stsToken)
