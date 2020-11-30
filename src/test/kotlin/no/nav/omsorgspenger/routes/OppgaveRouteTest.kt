@@ -31,7 +31,7 @@ internal class OppgaveRouteTest(
     fun `GET - token utstedt til oms-proxy proxyer request`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Get, oppgaveUrl) {
-                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken()}")
+                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(clientId = "allowed-1")}")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
             }.apply {
@@ -45,7 +45,7 @@ internal class OppgaveRouteTest(
     fun `POST - token utstedt til oms-proxy proxyer request`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Post, oppgaveUrl) {
-                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken()}")
+                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(clientId = "allowed-2")}")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
                 setBody("{}")
@@ -61,6 +61,19 @@ internal class OppgaveRouteTest(
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Get, oppgaveUrl) {
                 addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(audience = "ikke-oms-proxy")}")
+                addHeader(HttpHeaders.ContentType, "application/json")
+                addHeader(ProxiedHeader, "anything")
+            }.apply {
+                assertThat(response.status()).isEqualTo(HttpStatusCode.Forbidden)
+            }
+        }
+    }
+
+    @Test
+    fun `token fra en ikke authorized client gir 403`() {
+        with(testApplicationEngine) {
+            handleRequest(HttpMethod.Get, oppgaveUrl) {
+                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(clientId = "not-allowed")}")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
             }.apply {
