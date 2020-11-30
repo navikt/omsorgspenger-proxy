@@ -1,0 +1,19 @@
+{
+  "app": "omsorgspenger-proxy",
+  "cluster": "prod-fss",
+  "namespace": "omsorgspenger",
+  "team": "omsorgspenger",
+  "minReplicas": "2",
+  "maxReplicas": "4",
+  "azureTenant": "nav.no",
+  "ingresses": [
+    "https://omsorgspenger-proxy.adeo.no",
+    "https://omsorgspenger-proxy.prod-fss-pub.nais.io"
+  ],
+  "env": {
+    "STS_TOKEN_URL": "https://security-token-service.nais.adeo.no/rest/v1/sts/token",
+    "PDL_BASE_URL": "https://pdl-api.nais.adeo.no",
+    "OPPGAVE_BASE_URL": "https://oppgave.nais.adeo.no",
+    "AZURE_APP_AUTHORIZED_CLIENT_IDS": "4c4e6e55-2063-4507-8fd6-5d5a4604c0db,131a5e14-d559-47e1-940f-422f258bcecd"
+  }
+}

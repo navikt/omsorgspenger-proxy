@@ -50,3 +50,13 @@ jobs:
           CLUSTER: dev-fss
           RESOURCE: nais/naiserator.yaml
           VARS: nais/dev-fss.json
+
+      - name: Deploy til prod-fss
+        if: github.ref == 'refs/heads/main'
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-fss
+          RESOURCE: nais/naiserator.yaml
+          VARS: nais/prod-fss.json
+
