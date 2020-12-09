@@ -20,7 +20,9 @@ import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
 import no.nav.omsorgspenger.Auth.azureAnyScoped
 import no.nav.omsorgspenger.Auth.azureProxyScoped
 import no.nav.omsorgspenger.Auth.omsorgspengerProxyIssuers
+import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.config.load
+import no.nav.omsorgspenger.routes.DokarkivproxyRoute
 import no.nav.omsorgspenger.routes.OppgaveRoute
 import no.nav.omsorgspenger.routes.PdlRoute
 import no.nav.omsorgspenger.sts.StsRestClient
@@ -82,9 +84,14 @@ fun Application.app() {
                 config = config,
                 stsClient = stsClient
             )
+
         }
         authenticate(*issuers.azureProxyScoped()) {
             OppgaveRoute(
+                config = config,
+                stsClient = stsClient
+            )
+            DokarkivproxyRoute(
                 config = config,
                 stsClient = stsClient
             )
