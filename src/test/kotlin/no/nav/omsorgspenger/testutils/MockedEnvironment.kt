@@ -4,8 +4,10 @@ import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
 import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV2WellKnownUrl
 import no.nav.helse.dusseldorf.testsupport.wiremock.getNaisStsTokenUrl
 import no.nav.omsorgspenger.testutils.mocks.TokenResponseTransformer
+import no.nav.omsorgspenger.testutils.mocks.dokarkivproxyUrl
 import no.nav.omsorgspenger.testutils.mocks.oppgaveUrl
 import no.nav.omsorgspenger.testutils.mocks.pdlUrl
+import no.nav.omsorgspenger.testutils.mocks.stubDokarkivproxy
 import no.nav.omsorgspenger.testutils.mocks.stubOppgave
 import no.nav.omsorgspenger.testutils.mocks.stubPdl
 import no.nav.omsorgspenger.testutils.mocks.tokenTransformerMatcher
@@ -24,6 +26,7 @@ internal class MockedEnvironment(
         .build()
         .stubPdl()
         .stubOppgave()
+        .stubDokarkivproxy()
 
     internal val appConfig = mutableMapOf<String, String>()
 
@@ -31,6 +34,7 @@ internal class MockedEnvironment(
         appConfig["nav.sts.url"] = wireMockServer.getNaisStsTokenUrl()
         appConfig["nav.pdl.url"] = wireMockServer.pdlUrl()
         appConfig["nav.oppgave.url"] = wireMockServer.oppgaveUrl()
+        appConfig["nav.dokarkivproxy.url"] = wireMockServer.dokarkivproxyUrl()
         appConfig["nav.service_user.username"] = "test_username"
         appConfig["nav.service_user.password"] = "test_pw"
         appConfig["nav.auth.issuers.0.alias"] = "azure_proxy_scoped"

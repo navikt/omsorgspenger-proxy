@@ -8,6 +8,7 @@ internal data class Config(
     val pdl: PDL,
     val oppgave: Oppgave,
     val sts: STS,
+    val dokarkivproxy: Dokarkivproxy,
     val auth: Auth
 ) {
     internal data class ServiceUser(
@@ -24,6 +25,10 @@ internal data class Config(
     )
 
     internal data class STS(
+        val url: String
+    )
+
+    internal data class Dokarkivproxy(
         val url: String
     )
 
@@ -49,5 +54,8 @@ internal fun ApplicationConfig.load() = Config(
     ),
     auth = Config.Auth(
         azureAppClientId = property("nav.auth.azure_app_client_id").getString()
+    ),
+    dokarkivproxy = Config.Dokarkivproxy(
+        url = property("nav.dokarkivproxy.url").getString()
     )
 )
