@@ -6,6 +6,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
+import no.nav.omsorgspenger.testutils.AuthorizationHeaders.medAzure
 import no.nav.omsorgspenger.testutils.TestApplicationExtension
 import no.nav.omsorgspenger.testutils.mocks.ProxiedHeader
 import org.assertj.core.api.Assertions.assertThat
@@ -31,7 +32,7 @@ internal class OppgaveRouteTest(
     fun `GET - token utstedt til oms-proxy proxyer request`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Get, oppgaveUrl) {
-                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(clientId = "allowed-1")}")
+                medAzure(clientId = "allowed-1")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
             }.apply {
@@ -45,7 +46,7 @@ internal class OppgaveRouteTest(
     fun `POST - token utstedt til oms-proxy proxyer request`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Post, oppgaveUrl) {
-                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(clientId = "allowed-2")}")
+                medAzure(clientId = "allowed-2")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
                 setBody("{}")
@@ -60,7 +61,7 @@ internal class OppgaveRouteTest(
     fun `token scopet til annen tjeneste gir 403`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Get, oppgaveUrl) {
-                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(audience = "ikke-oms-proxy")}")
+                medAzure(audience = "ikke-oms-proxy")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
             }.apply {
@@ -73,7 +74,7 @@ internal class OppgaveRouteTest(
     fun `token fra en ikke authorized client gir 403`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Get, oppgaveUrl) {
-                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(clientId = "not-allowed")}")
+                medAzure(clientId = "not-allowed")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
             }.apply {

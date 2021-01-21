@@ -1,5 +1,7 @@
 package no.nav.omsorgspenger
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.interfaces.DecodedJWT
 import io.ktor.application.*
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.dusseldorf.ktor.auth.EnforceEqualsOrContains
@@ -33,7 +35,7 @@ internal class OpenAm(
         ))
     )
 
-    internal fun verifisertHeaderValue(call: ApplicationCall) : String {
+    private fun verifisert(call: ApplicationCall) : Pair<String, DecodedJWT> {
         require(call.harOpenAmToken()) {
             "Requesten inneholder ikke headeren $HeaderNavn"
         }
@@ -44,8 +46,18 @@ internal class OpenAm(
             throw Throwblem(problemDetails)
         }}
 
-        return headerValue
+        return headerValue to JWT.decode(jwt)
     }
+
+    internal fun verifisertHeaderValue(call: ApplicationCall) = verifisert(call).first
+
+    internal fun verifisertUserInfo(call: ApplicationCall) = UserInfo(
+        navIdent = verifisert(call).second.subject
+    )
+
+    internal data class UserInfo(
+        internal val navIdent: String
+    )
 
     internal companion object {
         private const val HeaderNavn = "X-Open-AM"

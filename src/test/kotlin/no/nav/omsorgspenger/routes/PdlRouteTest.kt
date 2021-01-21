@@ -6,9 +6,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
-import no.nav.helse.dusseldorf.testsupport.jws.Azure
+import no.nav.omsorgspenger.testutils.AuthorizationHeaders.medAzure
 import no.nav.omsorgspenger.testutils.TestApplicationExtension
-import no.nav.omsorgspenger.testutils.azureAppClientId
 import no.nav.omsorgspenger.testutils.mocks.ProxiedHeader
 import no.nav.omsorgspenger.testutils.mocks.likeHeadersBody
 import no.nav.omsorgspenger.testutils.mocks.ulikeHeadersBody
@@ -35,7 +34,7 @@ internal class PdlRouteTest(
     fun `token utstedt til oms-proxy proxyer request`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Post, pdlUrl) {
-                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(clientId = "allowed-1")}")
+                medAzure(clientId = "allowed-1")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
                 setBody("{}")
@@ -50,7 +49,7 @@ internal class PdlRouteTest(
     fun `token utstedt til oms-proxy men ikke allowed client feiler`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Post, pdlUrl) {
-                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(clientId = "not-allowed")}")
+                medAzure(clientId = "not-allowed")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
                 setBody("{}")
@@ -65,7 +64,7 @@ internal class PdlRouteTest(
     fun `token med annen audience propagerer auth header og proxyer request`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Post, pdlUrl) {
-                addHeader(HttpHeaders.Authorization, "Bearer ${azureIssuerToken(audience = "ikke-omsorgspenger-proxy")}")
+                medAzure(audience = "ikke-omsorgspenger-proxy")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(ProxiedHeader, "anything")
                 setBody("{}")
@@ -76,10 +75,3 @@ internal class PdlRouteTest(
         }
     }
 }
-
-internal fun azureIssuerToken(
-    clientId: String = "any",
-    audience: String = azureAppClientId) = Azure.V2_0.generateJwt(
-    clientId = clientId,
-    audience = audience
-)

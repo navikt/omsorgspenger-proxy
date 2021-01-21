@@ -21,12 +21,12 @@ import no.nav.omsorgspenger.Auth.azureAnyScoped
 import no.nav.omsorgspenger.Auth.azureProxyScoped
 import no.nav.omsorgspenger.Auth.omsorgspengerProxyIssuers
 import no.nav.omsorgspenger.config.load
+import no.nav.omsorgspenger.routes.ActiveDirectoryRoute
 import no.nav.omsorgspenger.routes.DokarkivproxyRoute
 import no.nav.omsorgspenger.routes.OppgaveRoute
 import no.nav.omsorgspenger.routes.PdlRoute
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.slf4j.event.Level
-import java.net.URI
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -75,6 +75,8 @@ fun Application.app() {
         healthService
     )
 
+    val openAm = OpenAm(wellKnownUri = config.openAm.wellKnownUri)
+
     install(Routing) {
         HealthRoute(healthService = healthService)
         MetricsRoute()
@@ -83,7 +85,7 @@ fun Application.app() {
             PdlRoute(
                 config = config,
                 stsClient = stsClient,
-                openAm = OpenAm(wellKnownUri = config.openAm.wellKnownUri)
+                openAm = openAm
             )
 
         }
@@ -95,6 +97,9 @@ fun Application.app() {
             DokarkivproxyRoute(
                 config = config,
                 stsClient = stsClient
+            )
+            ActiveDirectoryRoute(
+                openAm = openAm
             )
         }
     }
