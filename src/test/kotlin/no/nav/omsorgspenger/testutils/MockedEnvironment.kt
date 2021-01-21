@@ -1,8 +1,6 @@
 package no.nav.omsorgspenger.testutils
 
-import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
-import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV2WellKnownUrl
-import no.nav.helse.dusseldorf.testsupport.wiremock.getNaisStsTokenUrl
+import no.nav.helse.dusseldorf.testsupport.wiremock.*
 import no.nav.omsorgspenger.testutils.mocks.TokenResponseTransformer
 import no.nav.omsorgspenger.testutils.mocks.dokarkivproxyUrl
 import no.nav.omsorgspenger.testutils.mocks.oppgaveUrl
@@ -37,6 +35,7 @@ internal class MockedEnvironment(
         appConfig["nav.dokarkivproxy.url"] = wireMockServer.dokarkivproxyUrl()
         appConfig["nav.service_user.username"] = "test_username"
         appConfig["nav.service_user.password"] = "test_pw"
+        appConfig["nav.open_am.discovery_endpoint"] = wireMockServer.getNaisStsWellKnownUrl()
         appConfig["nav.auth.issuers.0.alias"] = "azure_proxy_scoped"
         appConfig["nav.auth.issuers.0.type"] = "azure"
         appConfig["nav.auth.issuers.0.audience"] = azureAppClientId

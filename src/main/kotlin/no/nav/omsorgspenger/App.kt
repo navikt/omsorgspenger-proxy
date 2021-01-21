@@ -20,13 +20,13 @@ import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
 import no.nav.omsorgspenger.Auth.azureAnyScoped
 import no.nav.omsorgspenger.Auth.azureProxyScoped
 import no.nav.omsorgspenger.Auth.omsorgspengerProxyIssuers
-import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.config.load
 import no.nav.omsorgspenger.routes.DokarkivproxyRoute
 import no.nav.omsorgspenger.routes.OppgaveRoute
 import no.nav.omsorgspenger.routes.PdlRoute
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.slf4j.event.Level
+import java.net.URI
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -82,7 +82,8 @@ fun Application.app() {
         authenticate(*issuers.azureAnyScoped()) {
             PdlRoute(
                 config = config,
-                stsClient = stsClient
+                stsClient = stsClient,
+                openAm = OpenAm(wellKnownUri = config.openAm.wellKnownUri)
             )
 
         }

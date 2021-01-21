@@ -2,6 +2,7 @@ package no.nav.omsorgspenger.config
 
 import io.ktor.config.ApplicationConfig
 import io.ktor.util.KtorExperimentalAPI
+import java.net.URI
 
 internal data class Config(
     val serviceUser: ServiceUser,
@@ -9,7 +10,8 @@ internal data class Config(
     val oppgave: Oppgave,
     val sts: STS,
     val dokarkivproxy: Dokarkivproxy,
-    val auth: Auth
+    val auth: Auth,
+    val openAm: OpenAM
 ) {
     internal data class ServiceUser(
         val username: String,
@@ -30,6 +32,10 @@ internal data class Config(
 
     internal data class Dokarkivproxy(
         val url: String
+    )
+
+    internal data class OpenAM(
+        val wellKnownUri: URI
     )
 
     internal data class Auth(
@@ -57,5 +63,8 @@ internal fun ApplicationConfig.load() = Config(
     ),
     dokarkivproxy = Config.Dokarkivproxy(
         url = property("nav.dokarkivproxy.url").getString()
+    ),
+    openAm = Config.OpenAM(
+        wellKnownUri = URI(property("nav.open_am.discovery_endpoint").getString())
     )
 )
