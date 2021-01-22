@@ -17,5 +17,7 @@
     "DOKARKIV_PROXY_BASE_URL": "https://dokarkivproxy-q1.nais.preprod.local",
     "OPEN_AM_WELL_KNOWN_URL": "https://isso-q.adeo.no/isso/oauth2/.well-known/openid-configuration",
     "AZURE_APP_AUTHORIZED_CLIENT_IDS": "5df7fa86-8398-4726-a269-4c8d78d1f8ca,3ebacf0c-2409-4ae7-8507-07c8da9ddd25,ac7232d6-c687-4965-a43e-21d00b62a69e,7fe060d6-c455-4edd-aa56-efb29780a305",
+    "LDAP_URL": "ldaps://ldapgw.preprod.local",
+    "LDAP_SEARCH_BASE": "ou=NAV,ou=BusinessUnits,dc=preprod,dc=local"
   }
 }

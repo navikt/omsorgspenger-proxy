@@ -45,6 +45,7 @@ spec:
     path: /metrics
   envFrom:
     - secret: omsorgspenger-proxy-srvusercredentials
+    - secret: ldap-credentials
   env:
   {{#each env}}
     - name: {{@key}}
