@@ -6,11 +6,11 @@ import no.nav.helse.dusseldorf.testsupport.jws.Azure
 import no.nav.helse.dusseldorf.testsupport.jws.NaisSts
 
 internal object AuthorizationHeaders {
-    internal fun TestApplicationRequest.medOpenAm() {
+    internal fun TestApplicationRequest.medOpenAm(navIdent: String = "person1") {
         addHeader("X-Open-AM", "Bearer ${NaisSts.generateJwt(
             application = "foo",
             overridingClaims = mapOf(
-                "sub" to "F1337",
+                "sub" to navIdent,
                 "tokenName" to "id_token"
             )
         )}")

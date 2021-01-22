@@ -8,9 +8,6 @@ import no.nav.omsorgspenger.OpenAm
 import no.nav.omsorgspenger.ldap.LdapService
 import org.json.JSONArray
 import org.json.JSONObject
-import org.slf4j.LoggerFactory
-
-private val logger = LoggerFactory.getLogger("no.nav.ActiveDirectoryRoute")
 
 /**
  * Bruker samme mønster som om man henter grupper fra GraphQL for

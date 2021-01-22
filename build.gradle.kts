@@ -40,6 +40,8 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     testImplementation("no.nav.helse:dusseldorf-test-support:$dusseldorfVersion")
     testImplementation("org.assertj:assertj-core:$assertjVersion")
+    testImplementation("org.skyscreamer:jsonassert:$jsonassertVersion")
+
 }
 
 repositories {
