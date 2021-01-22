@@ -20,7 +20,8 @@ import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
 import no.nav.omsorgspenger.Auth.azureAnyScoped
 import no.nav.omsorgspenger.Auth.azureProxyScoped
 import no.nav.omsorgspenger.Auth.omsorgspengerProxyIssuers
-import no.nav.omsorgspenger.config.load
+import no.nav.omsorgspenger.config.Config
+import no.nav.omsorgspenger.ldap.LdapService
 import no.nav.omsorgspenger.routes.ActiveDirectoryRoute
 import no.nav.omsorgspenger.routes.DokarkivproxyRoute
 import no.nav.omsorgspenger.routes.OppgaveRoute
@@ -31,8 +32,7 @@ import org.slf4j.event.Level
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @KtorExperimentalAPI
-fun Application.app() {
-    val config = environment.config.load()
+internal fun Application.app(applicationContext: ApplicationContext = ApplicationContext.Builder().build()) {
     install(ContentNegotiation) {
         jackson()
     }
@@ -54,15 +54,15 @@ fun Application.app() {
         callIdMdc("correlation_id")
     }
 
-    val issuers = environment.config.omsorgspengerProxyIssuers()
+    val issuers = applicationContext.env.omsorgspengerProxyIssuers()
 
     install(Authentication) {
         multipleJwtIssuers(issuers)
     }
 
     val stsClient = StsRestClient(
-        stsTokenUrl = config.sts.url,
-        serviceUser = config.serviceUser
+        stsConfig = Config.STS(applicationContext.env),
+        serviceUserConfig = Config.ServiceUser(applicationContext.env)
     )
     val healthService = HealthService(
         setOf(
@@ -75,7 +75,9 @@ fun Application.app() {
         healthService
     )
 
-    val openAm = OpenAm(wellKnownUri = config.openAm.wellKnownUri)
+    val openAm = OpenAm(
+        openAmConfig = Config.OpenAM(applicationContext.env)
+    )
 
     install(Routing) {
         HealthRoute(healthService = healthService)
@@ -83,7 +85,8 @@ fun Application.app() {
         DefaultProbeRoutes()
         authenticate(*issuers.azureAnyScoped()) {
             PdlRoute(
-                config = config,
+                pdlConfig = Config.PDL(applicationContext.env),
+                authConfig = Config.Auth(applicationContext.env),
                 stsClient = stsClient,
                 openAm = openAm
             )
@@ -91,15 +94,18 @@ fun Application.app() {
         }
         authenticate(*issuers.azureProxyScoped()) {
             OppgaveRoute(
-                config = config,
+                oppgaveConfig = Config.Oppgave(applicationContext.env),
                 stsClient = stsClient
             )
             DokarkivproxyRoute(
-                config = config,
+                dokarkivProxyConfig = Config.Dokarkivproxy(applicationContext.env),
                 stsClient = stsClient
             )
             ActiveDirectoryRoute(
-                openAm = openAm
+                openAm = openAm,
+                ldapService = LdapService(
+                    ldapGateway = applicationContext.ldapGateway
+                )
             )
         }
     }

@@ -16,7 +16,7 @@ internal object AuthorizationHeaders {
         )}")
     }
     internal fun TestApplicationRequest.medAzure(
-        audience: String = azureAppClientId,
+        audience: String = "omsorgspenger-proxy",
         clientId: String = "allowed-1") {
         addHeader(HttpHeaders.Authorization, "Bearer ${Azure.V2_0.generateJwt(
             clientId = clientId,

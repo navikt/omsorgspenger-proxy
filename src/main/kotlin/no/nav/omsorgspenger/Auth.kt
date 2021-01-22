@@ -4,11 +4,13 @@ import com.auth0.jwt.interfaces.Claim
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
-import io.ktor.config.*
-import io.ktor.util.*
+import kotlinx.coroutines.runBlocking
 import no.nav.helse.dusseldorf.ktor.auth.*
-import no.nav.helse.dusseldorf.ktor.core.getRequiredList
-import no.nav.helse.dusseldorf.ktor.core.getRequiredString
+import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpGet
+import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.readTextOrThrow
+import no.nav.omsorgspenger.config.Config.getOrFail
+import org.json.JSONObject
+import java.net.URI
 
 internal object Auth {
     /**
@@ -35,18 +37,37 @@ internal object Auth {
         it.alias() == AzureAnyScopeAlias
     }.also { require(it.size == 1) }.allIssuers()
 
-    @KtorExperimentalAPI
-    internal fun ApplicationConfig.omsorgspengerProxyIssuers(): Map<Issuer, Set<ClaimRule>> {
+    internal fun Map<String, String>.omsorgspengerProxyIssuers(): Map<Issuer, Set<ClaimRule>> {
 
         val enforceAuthorizedClient = AzureClaimRules.Companion.EnforceAuthorizedClient(
-            authorizedClients = getRequiredList("nav.auth.azure_app_authorized_client_ids", secret = false, builder = { it }).toSet()
+            authorizedClients = getOrFail("AZURE_APP_AUTHORIZED_CLIENT_IDS")
+                .replace(" ", "")
+                .split(",")
+                .toSet()
         )
 
-        return issuers().withAdditionalClaimRules(
+        val (azureIssuer, azureJwksUri) = URI(getOrFail("AZURE_APP_WELL_KNOWN_URL")).discover()
+
+        val issuers = mapOf(
+            AzureProxyScopedAlias to Issuer(
+                alias = AzureProxyScopedAlias,
+                issuer = azureIssuer,
+                jwksUri = azureJwksUri,
+                audience = getOrFail("AZURE_APP_CLIENT_ID")
+            ),
+            AzureAnyScopeAlias to Issuer(
+                alias = AzureAnyScopeAlias,
+                issuer = azureIssuer,
+                jwksUri = azureJwksUri,
+                audience = null
+            )
+        )
+
+        return issuers.withAdditionalClaimRules(
             mapOf(
                 AzureAnyScopeAlias to setOf(
                     AzureAnyScopedClaimRule(
-                        omsorgspengerProxyClientId = getRequiredString("nav.auth.azure_app_client_id", secret = false),
+                        omsorgspengerProxyClientId = getOrFail("AZURE_APP_CLIENT_ID"),
                         enforceAuthorizedClient = enforceAuthorizedClient
                     )
                 ),
@@ -73,6 +94,11 @@ internal object Auth {
             }
         }
     }
+
+    internal fun URI.discover(): Pair<String, URI> = this.toString().let { url -> runBlocking {
+        val json = JSONObject(url.httpGet().readTextOrThrow().second)
+        requireNotNull(json.getString("issuer")) to URI(requireNotNull(json.getString("jwks_uri")))
+    }}
 }
 
 internal fun ApplicationCall.erScopetTilOmsorgspengerProxy(omsorgspengerProxyClientId: String) =

@@ -20,18 +20,19 @@ import org.slf4j.LoggerFactory
 private val logger = LoggerFactory.getLogger("no.nav.PdlRoute")
 
 internal fun Route.PdlRoute(
-    config: Config,
+    pdlConfig: Config.PDL,
+    authConfig: Config.Auth,
     stsClient: StsRestClient,
     openAm: OpenAm
 ) {
     route("/pdl{...}") {
         post {
-            val pdlUrl = config.pdl.url
+            val pdlUrl = pdlConfig.url
             val path = call.request.uri.removePrefix("/pdl")
             val fullPdlPath = "$pdlUrl$path"
 
             val stsAuthorizationHeader = stsClient.token().asAuthoriationHeader()
-            val erScopetTilOmsorgspengerProxy = call.erScopetTilOmsorgspengerProxy(config.auth.azureAppClientId)
+            val erScopetTilOmsorgspengerProxy = call.erScopetTilOmsorgspengerProxy(authConfig.azureAppClientId)
 
             val authorizationHeader = when {
                 erScopetTilOmsorgspengerProxy && call.harOpenAmToken() -> openAm.verifisertHeaderValue(call)
@@ -48,7 +49,7 @@ internal fun Route.PdlRoute(
         }
 
         options {
-            val pdlUrl = config.pdl.url
+            val pdlUrl = pdlConfig.url
             val path = call.request.uri.removePrefix("/pdl")
             val fullPdlPath = "$pdlUrl$path"
 
