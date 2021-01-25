@@ -22,7 +22,7 @@ internal class DefaultLdapGateway(
         Context.INITIAL_CONTEXT_FACTORY to "com.sun.jndi.ldap.LdapCtxFactory",
         Context.PROVIDER_URL to ldapConfig.url,
         Context.SECURITY_AUTHENTICATION to "simple",
-        Context.SECURITY_PRINCIPAL to "${ldapConfig.username}@${ldapConfig.domain}",
+        Context.SECURITY_PRINCIPAL to ldapConfig.username,
         Context.SECURITY_CREDENTIALS to ldapConfig.password
     ))
 

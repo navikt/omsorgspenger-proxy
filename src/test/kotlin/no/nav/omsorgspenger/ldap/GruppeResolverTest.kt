@@ -11,7 +11,8 @@ internal class GruppeResolverTest {
     fun `Henter ut grupper på rett format`() {
         val memberOf = BasicAttribute("memberOf")
         memberOf.add("CN=0000-GA-k9-saksbehsandler,jojoa,neinei,CN=0000-GA-k9-beslutter")
+        memberOf.add("foo,bar,CN=UkjentGruppe,CN=0000-GA-Annet-System")
         val grupper = memberOf.gruppeResolver()
-        assertEquals(setOf("0000-GA-k9-saksbehsandler", "0000-GA-k9-beslutter"), grupper)
+        assertEquals(setOf("0000-GA-k9-saksbehsandler", "0000-GA-k9-beslutter", "UkjentGruppe", "0000-GA-Annet-System"), grupper)
     }
 }
