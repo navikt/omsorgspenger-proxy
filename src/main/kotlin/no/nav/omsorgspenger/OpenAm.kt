@@ -10,18 +10,18 @@ import no.nav.helse.dusseldorf.ktor.core.DefaultProblemDetails
 import no.nav.helse.dusseldorf.ktor.core.Throwblem
 import no.nav.omsorgspenger.Auth.discover
 import no.nav.omsorgspenger.config.Config
-import java.net.URI
 
 internal class OpenAm(
-    private val openAmConfig: Config.OpenAM) {
+    openAmConfig: Config.OpenAM) {
+    private val issuerOgJwksUri = openAmConfig.wellKnownUri.discover()
+    internal val jwksUri = issuerOgJwksUri.second
 
     private val jwtVerifier = {
-        val (issuer, jwksUri) = openAmConfig.wellKnownUri.discover()
         JwtVerifier(
             issuer = Issuer(
                 alias = "open_am",
-                issuer = issuer,
-                jwksUri = jwksUri,
+                issuer = issuerOgJwksUri.first,
+                jwksUri = issuerOgJwksUri.second,
                 audience = null
             ),
             additionalClaimRules = setOf(EnforceEqualsOrContains(

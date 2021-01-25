@@ -22,6 +22,7 @@ import no.nav.omsorgspenger.Auth.azureProxyScoped
 import no.nav.omsorgspenger.Auth.omsorgspengerProxyIssuers
 import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.ldap.LdapService
+import no.nav.omsorgspenger.routes.*
 import no.nav.omsorgspenger.routes.ActiveDirectoryRoute
 import no.nav.omsorgspenger.routes.DokarkivproxyRoute
 import no.nav.omsorgspenger.routes.OppgaveRoute
@@ -83,6 +84,7 @@ internal fun Application.app(applicationContext: ApplicationContext = Applicatio
         HealthRoute(healthService = healthService)
         MetricsRoute()
         DefaultProbeRoutes()
+        OpenAmPublicRoute(openAm = openAm)
         authenticate(*issuers.azureAnyScoped()) {
             PdlRoute(
                 pdlConfig = Config.PDL(applicationContext.env),
