@@ -22,7 +22,7 @@ internal class DefaultLdapGateway(
         Context.INITIAL_CONTEXT_FACTORY to "com.sun.jndi.ldap.LdapCtxFactory",
         Context.PROVIDER_URL to ldapConfig.url,
         Context.SECURITY_AUTHENTICATION to "simple",
-        Context.SECURITY_PRINCIPAL to ldapConfig.username,
+        Context.SECURITY_PRINCIPAL to "${ldapConfig.username}@${ldapConfig.domain}",
         Context.SECURITY_CREDENTIALS to ldapConfig.password
     ))
 
@@ -37,7 +37,27 @@ internal class DefaultLdapGateway(
     override fun hentGrupper(navIdent: String) : Set<String> {
         val searchResult = search(navIdent) ?: return emptySet()
         val memberOf = searchResult.attribute(MemberOf) ?: return emptySet()
-        return memberOf.all
+        return memberOf.gruppeResolver()
+    }
+
+    private fun ldapContext(): LdapContext = InitialLdapContext(ldapEnvironment, null)
+
+    internal companion object {
+        private const val MemberOf = "memberOf"
+        private fun NamingEnumeration<SearchResult>.searchResult() : SearchResult? {
+            return if (!hasMoreElements()) {
+                logger.warn("Ingen SearchResult")
+                null
+            } else { nextElement() }
+        }
+        private fun SearchResult.attribute(key: String) : Attribute? = attributes[key].also { attribute ->
+            if (attribute == null) {
+                logger.warn("Inneholder ikke Attribute[$key]")
+            }
+        }
+        private val logger = LoggerFactory.getLogger(LdapGateway::class.java)
+
+        internal fun Attribute.gruppeResolver() = all
             .iterator()
             .asSequence()
             .map { it as String }
@@ -46,22 +66,5 @@ internal class DefaultLdapGateway(
             .filter { it.startsWith("CN") }
             .map { it.substringAfter("=") }
             .toSet()
-    }
-
-    private fun ldapContext(): LdapContext = InitialLdapContext(ldapEnvironment, null)
-
-    private companion object {
-        private const val MemberOf = "memberOf"
-        private fun NamingEnumeration<SearchResult>.searchResult() : SearchResult? = next().also { searchResult ->
-            if (searchResult == null) {
-                logger.warn("Ingen SearchResult")
-            }
-        }
-        private fun SearchResult.attribute(key: String) : Attribute? = attributes[key].also { attribute ->
-            if (attribute == null) {
-                logger.warn("Inneholder ikke Attribute[$key]")
-            }
-        }
-        private val logger = LoggerFactory.getLogger(LdapGateway::class.java)
     }
 }

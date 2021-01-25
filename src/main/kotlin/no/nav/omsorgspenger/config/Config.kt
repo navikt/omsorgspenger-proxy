@@ -35,6 +35,7 @@ internal object Config {
 
     internal class Ldap(env: Map<String, String>) {
         internal val url = env.getOrFail("LDAP_URL")
+        internal val domain = env.getOrFail("LDAP_DOMAIN")
         internal val username = env.getOrFail("LDAP_USERNAME")
         internal val password = env.getOrFail("LDAP_PASSWORD")
         internal val searchBase = env.getOrFail("LDAP_SEARCH_BASE")
