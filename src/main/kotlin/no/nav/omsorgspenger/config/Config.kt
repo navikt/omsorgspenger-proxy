@@ -1,61 +1,47 @@
 package no.nav.omsorgspenger.config
 
-import io.ktor.config.ApplicationConfig
-import io.ktor.util.KtorExperimentalAPI
+import java.net.URI
 
-internal data class Config(
-    val serviceUser: ServiceUser,
-    val pdl: PDL,
-    val oppgave: Oppgave,
-    val sts: STS,
-    val dokarkivproxy: Dokarkivproxy,
-    val auth: Auth
-) {
-    internal data class ServiceUser(
-        val username: String,
-        val password: String
-    )
+internal object Config {
 
-    internal data class PDL(
-        val url: String
-    )
+    internal class ServiceUser(env: Map<String, String>) {
+        internal val username = env.getOrFail("username")
+        internal val password = env.getOrFail("password")
+    }
 
-    internal data class Oppgave(
-        val url: String
-    )
+    internal class PDL(env: Map<String, String>) {
+        internal val url = env.getOrFail("PDL_BASE_URL")
+    }
 
-    internal data class STS(
-        val url: String
-    )
+    internal class Oppgave(env: Map<String, String>) {
+        internal val url = env.getOrFail("OPPGAVE_BASE_URL")
+    }
 
-    internal data class Dokarkivproxy(
-        val url: String
-    )
+    internal class STS(env: Map<String, String>) {
+        internal val url = env.getOrFail("STS_TOKEN_URL")
+    }
 
-    internal data class Auth(
-        val azureAppClientId: String
-    )
+    internal class Dokarkivproxy(env: Map<String, String>) {
+        internal val url = env.getOrFail("DOKARKIV_PROXY_BASE_URL")
+    }
+
+    internal class OpenAM(env: Map<String, String>) {
+        internal val wellKnownUri = URI(env.getOrFail("OPEN_AM_WELL_KNOWN_URL"))
+    }
+
+    internal class Auth(env: Map<String, String>) {
+        internal val azureAppClientId = env.getOrFail("AZURE_APP_CLIENT_ID")
+    }
+
+    internal class Ldap(env: Map<String, String>) {
+        internal val url = env.getOrFail("LDAP_URL")
+        internal val username = env.getOrFail("LDAP_USERNAME")
+        internal val password = env.getOrFail("LDAP_PASSWORD")
+        internal val searchBase = env.getOrFail("LDAP_SEARCH_BASE")
+    }
+
+    internal fun Map<String, String>.getOrFail(key: String) = getOrElse(key, {
+        throw IllegalStateException("Mangler Environment variable $key")
+    })
 }
 
-@KtorExperimentalAPI
-internal fun ApplicationConfig.load() = Config(
-    serviceUser = Config.ServiceUser(
-        username = property("nav.service_user.username").getString(),
-        password = property("nav.service_user.password").getString()
-    ),
-    pdl = Config.PDL(
-        url = property("nav.pdl.url").getString()
-    ),
-    oppgave = Config.Oppgave(
-        url = property("nav.oppgave.url").getString()
-    ),
-    sts = Config.STS(
-        url = property("nav.sts.url").getString()
-    ),
-    auth = Config.Auth(
-        azureAppClientId = property("nav.auth.azure_app_client_id").getString()
-    ),
-    dokarkivproxy = Config.Dokarkivproxy(
-        url = property("nav.dokarkivproxy.url").getString()
-    )
-)

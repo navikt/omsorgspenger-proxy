@@ -8,6 +8,8 @@ import io.ktor.routing.options
 import io.ktor.routing.post
 import io.ktor.routing.route
 import no.nav.omsorgspenger.NavConsumerToken
+import no.nav.omsorgspenger.OpenAm
+import no.nav.omsorgspenger.OpenAm.Companion.harOpenAmToken
 import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.erScopetTilOmsorgspengerProxy
 import no.nav.omsorgspenger.forwardOptions
@@ -18,21 +20,25 @@ import org.slf4j.LoggerFactory
 private val logger = LoggerFactory.getLogger("no.nav.PdlRoute")
 
 internal fun Route.PdlRoute(
-    config: Config,
+    pdlConfig: Config.PDL,
+    authConfig: Config.Auth,
     stsClient: StsRestClient,
+    openAm: OpenAm
 ) {
     route("/pdl{...}") {
         post {
-            val pdlUrl = config.pdl.url
+            val pdlUrl = pdlConfig.url
             val path = call.request.uri.removePrefix("/pdl")
             val fullPdlPath = "$pdlUrl$path"
 
             val stsAuthorizationHeader = stsClient.token().asAuthoriationHeader()
+            val erScopetTilOmsorgspengerProxy = call.erScopetTilOmsorgspengerProxy(authConfig.azureAppClientId)
 
-            val authorizationHeader = if (call.erScopetTilOmsorgspengerProxy(config.auth.azureAppClientId))
-                stsAuthorizationHeader
-            else
-                call.request.headers[HttpHeaders.Authorization]!!
+            val authorizationHeader = when {
+                erScopetTilOmsorgspengerProxy && call.harOpenAmToken() -> openAm.verifisertHeaderValue(call)
+                erScopetTilOmsorgspengerProxy -> stsAuthorizationHeader
+                else -> call.request.headers[HttpHeaders.Authorization]!!
+            }
 
             val extraHeaders = mapOf(
                 HttpHeaders.Authorization to authorizationHeader,
@@ -43,7 +49,7 @@ internal fun Route.PdlRoute(
         }
 
         options {
-            val pdlUrl = config.pdl.url
+            val pdlUrl = pdlConfig.url
             val path = call.request.uri.removePrefix("/pdl")
             val fullPdlPath = "$pdlUrl$path"
 

@@ -14,12 +14,12 @@ import org.slf4j.LoggerFactory
 private val logger = LoggerFactory.getLogger("no.nav.DokarkivproxyRoute")
 
 internal fun Route.DokarkivproxyRoute(
-    config: Config,
+    dokarkivProxyConfig: Config.Dokarkivproxy,
     stsClient: StsRestClient,
 ) {
     route("/dokarkivproxy{...}") {
         put {
-            val dokarkivproxyUrl = config.dokarkivproxy.url
+            val dokarkivproxyUrl = dokarkivProxyConfig.url
             val path = call.request.uri.removePrefix("/dokarkivproxy")
 
             val stsToken = stsClient.token().asAuthoriationHeader()

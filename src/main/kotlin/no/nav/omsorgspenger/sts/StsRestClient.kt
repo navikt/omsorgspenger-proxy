@@ -10,15 +10,15 @@ import no.nav.omsorgspenger.config.Config
 import java.net.URI
 
 internal class StsRestClient(
-    stsTokenUrl: String,
-    serviceUser: Config.ServiceUser,
+    stsConfig: Config.STS,
+    serviceUserConfig: Config.ServiceUser,
 ) : HealthCheck {
 
     private val cachedAccessTokenClient: CachedAccessTokenClient = CachedAccessTokenClient(
         ClientSecretAccessTokenClient(
-            clientId = serviceUser.username,
-            clientSecret = serviceUser.password,
-            tokenEndpoint = URI(stsTokenUrl)
+            clientId = serviceUserConfig.username,
+            clientSecret = serviceUserConfig.password,
+            tokenEndpoint = URI(stsConfig.url)
         )
     )
 

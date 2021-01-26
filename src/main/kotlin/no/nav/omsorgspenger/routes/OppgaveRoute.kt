@@ -16,11 +16,11 @@ import org.slf4j.LoggerFactory
 private val logger = LoggerFactory.getLogger("no.nav.OppgaveRoute")
 
 internal fun Route.OppgaveRoute(
-    config: Config,
+    oppgaveConfig: Config.Oppgave,
     stsClient: StsRestClient
 ) {
     route("/oppgave{...}") {
-        val oppgaveUrl = config.oppgave.url
+        val oppgaveUrl = oppgaveConfig.url
 
         post {
             val path = call.request.uri.removePrefix("/oppgave")
