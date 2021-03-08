@@ -1,6 +1,7 @@
 {
   "app": "omsorgspenger-proxy",
   "cluster": "dev-fss",
+  "clusterGcp": "dev-gcp",
   "namespace": "omsorgspenger",
   "team": "omsorgspenger",
   "minReplicas": "1",
