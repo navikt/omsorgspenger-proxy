@@ -1,7 +1,8 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val junitJupiterVersion = "5.7.1"
-val dusseldorfVersion = "1.5.2.7462190"
+val dusseldorfVersion = "1.5.2.c37225a"
 val ktorVersion = ext.get("ktorVersion").toString()
 
 val jsonassertVersion = "1.5.0"
@@ -15,12 +16,12 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_12
-    targetCompatibility = JavaVersion.VERSION_12
+    sourceCompatibility = JavaVersion.VERSION_15
+    targetCompatibility = JavaVersion.VERSION_15
 }
 
 buildscript {
-    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/74621902fe5511bd1836d2cff1fbca9ab864dadd/gradle/dusseldorf-ktor.gradle.kts")
+    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/c37225a61cd54d3261838b2e4277c4acfb4639bd/gradle/dusseldorf-ktor.gradle.kts")
 }
 
 dependencies {
@@ -60,6 +61,15 @@ repositories {
 }
 
 tasks {
+
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "15"
+    }
+
+    named<KotlinCompile>("compileTestKotlin") {
+        kotlinOptions.jvmTarget = "15"
+    }
+
 
     withType<Test> {
         useJUnitPlatform()
