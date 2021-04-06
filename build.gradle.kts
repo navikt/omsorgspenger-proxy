@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val junitJupiterVersion = "5.7.1"
-val dusseldorfVersion = "1.5.2.c37225a"
+val dusseldorfVersion = "1.5.3.d73b2af"
 val ktorVersion = ext.get("ktorVersion").toString()
 
 val jsonassertVersion = "1.5.0"
@@ -11,7 +11,7 @@ val assertjVersion = "3.19.0"
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.4.31"
+    kotlin("jvm") version "1.4.32"
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
@@ -21,7 +21,7 @@ java {
 }
 
 buildscript {
-    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/c37225a61cd54d3261838b2e4277c4acfb4639bd/gradle/dusseldorf-ktor.gradle.kts")
+    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/d73b2af77b77d908871544520528c10e51703913/gradle/dusseldorf-ktor.gradle.kts")
 }
 
 dependencies {
@@ -56,8 +56,6 @@ repositories {
         }
     }
     mavenCentral()
-    jcenter()
-    maven("https://dl.bintray.com/kotlin/ktor")
 }
 
 tasks {

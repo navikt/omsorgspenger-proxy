@@ -6,7 +6,6 @@ import io.ktor.auth.authenticate
 import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.jackson.jackson
-import io.ktor.request.*
 import io.ktor.routing.Routing
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.dusseldorf.ktor.auth.AuthStatusPages
