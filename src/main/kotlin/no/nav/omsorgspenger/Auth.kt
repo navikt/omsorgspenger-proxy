@@ -9,10 +9,13 @@ import no.nav.helse.dusseldorf.ktor.auth.*
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpGet
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.readTextOrThrow
 import no.nav.omsorgspenger.config.Config.getOrFail
+import org.json.JSONArray
 import org.json.JSONObject
+import org.slf4j.LoggerFactory
 import java.net.URI
 
 internal object Auth {
+    private val logger = LoggerFactory.getLogger(Auth::class.java)
     /**
      * Om tokenet er scopet til 'omsorgspenger-proxy' vil tjenesten
      * veksle tokens iht. hva den bakomforliggende tjenesten trenger.
@@ -40,10 +43,11 @@ internal object Auth {
     internal fun Map<String, String>.omsorgspengerProxyIssuers(): Map<Issuer, Set<ClaimRule>> {
 
         val enforceAuthorizedClient = AzureClaimRules.Companion.EnforceAuthorizedClient(
-            authorizedClients = getOrFail("AZURE_APP_AUTHORIZED_CLIENT_IDS")
-                .replace(" ", "")
-                .split(",")
-                .toSet()
+            authorizedClients = JSONArray(getOrFail("AZURE_APP_PRE_AUTHORIZED_APPS"))
+              .map { it as JSONObject }
+              .map { it.getString("clientId") }
+              .toSet()
+              .also { logger.info("AuthorizedClientIds=$it") }
         )
 
         val (azureIssuer, azureJwksUri) = URI(getOrFail("AZURE_APP_WELL_KNOWN_URL")).discover()

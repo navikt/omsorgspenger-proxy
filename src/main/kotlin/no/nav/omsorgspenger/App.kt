@@ -105,6 +105,10 @@ internal fun Application.app(applicationContext: ApplicationContext = Applicatio
                     ldapGateway = applicationContext.ldapGateway
                 )
             )
+            K9SakRoute(
+                config = Config.K9Sak(applicationContext.env),
+                stsClient = stsClient
+            )
         }
     }
 }
