@@ -26,11 +26,11 @@ internal fun Route.K9SakRoute(
       )}
 
     route(Path) {
-        post("/fordel/journalposter") {
+        post("/api/fordel/journalposter") {
             call.forwardPost(call.toUrl(), accessToken(), logger)
         }
 
-        post("/fordel/fagsak/opprett") {
+        post("/api/fordel/fagsak/opprett") {
             call.forwardPost(call.toUrl(), accessToken(), logger)
         }
 
