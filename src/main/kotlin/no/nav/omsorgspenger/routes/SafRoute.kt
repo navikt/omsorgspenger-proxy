@@ -26,13 +26,16 @@ internal fun Route.SafRoute(
         )
     }
 
+    val utenAuthorizationHeader = mapOf(HttpHeaders.Authorization to null)
+
+
     route (Path) {
         post("/graphql") {
             call.forwardPost(call.toUrl(), accessToken(), logger)
         }
 
         get("/isReady") {
-            call.forwardGet(call.toUrl(), emptyMap(), logger)
+            call.forwardGet(call.toUrl(), utenAuthorizationHeader, logger)
         }
     }
 }

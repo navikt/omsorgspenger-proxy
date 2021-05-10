@@ -20,7 +20,7 @@ import io.ktor.response.respond
 import io.ktor.response.respondBytes
 import org.slf4j.Logger
 
-internal suspend fun ApplicationCall.forwardPost(toUrl: String, extraHeaders: Map<String, Any>, logger: Logger) {
+internal suspend fun ApplicationCall.forwardPost(toUrl: String, extraHeaders: Map<String, Any?>, logger: Logger) {
     val parameters = request.queryParameters.toFuel()
     val postRequest = toUrl
         .httpPost(parameters)
@@ -29,7 +29,7 @@ internal suspend fun ApplicationCall.forwardPost(toUrl: String, extraHeaders: Ma
     forwardRequest(postRequest, extraHeaders, logger)
 }
 
-internal suspend fun ApplicationCall.forwardPut(toUrl: String, extraHeaders: Map<String, Any>, logger: Logger) {
+internal suspend fun ApplicationCall.forwardPut(toUrl: String, extraHeaders: Map<String, Any?>, logger: Logger) {
     val parameters = request.queryParameters.toFuel()
     val putRequest = toUrl
             .httpPut(parameters)
@@ -38,7 +38,7 @@ internal suspend fun ApplicationCall.forwardPut(toUrl: String, extraHeaders: Map
     forwardRequest(putRequest, extraHeaders, logger)
 }
 
-internal suspend fun ApplicationCall.forwardGet(toUrl: String, extraHeaders: Map<String, Any>, logger: Logger) {
+internal suspend fun ApplicationCall.forwardGet(toUrl: String, extraHeaders: Map<String, Any?>, logger: Logger) {
     val parameters = request.queryParameters.toFuel()
     val postRequest = toUrl
         .httpGet(parameters)
@@ -46,14 +46,14 @@ internal suspend fun ApplicationCall.forwardGet(toUrl: String, extraHeaders: Map
     forwardRequest(postRequest, extraHeaders, logger)
 }
 
-internal suspend fun ApplicationCall.forwardOptions(toUrl: String, extraHeaders: Map<String, Any>, logger: Logger) {
+internal suspend fun ApplicationCall.forwardOptions(toUrl: String, extraHeaders: Map<String, Any?>, logger: Logger) {
     val parameters = request.queryParameters.toFuel()
     val optionsRequest = Fuel.request(Method.OPTIONS, toUrl, parameters)
 
     forwardRequest(optionsRequest, extraHeaders, logger)
 }
 
-private suspend fun ApplicationCall.forwardRequest(fuelRequest: Request, extraHeaders: Map<String, Any>, logger: Logger) {
+private suspend fun ApplicationCall.forwardRequest(fuelRequest: Request, extraHeaders: Map<String, Any?>, logger: Logger) {
     val httpRequest = fuelRequest
         .header(request.headers.toMap(extraHeaders))
         .timeout(20_000)
@@ -73,14 +73,21 @@ private suspend fun ApplicationCall.forwardRequest(fuelRequest: Request, extraHe
     )
 }
 
-private fun Headers.toMap(extraHeaders: Map<String, Any>): Map<String, Any> {
+private fun Headers.toMap(extraHeaders: Map<String, Any?>): Map<String, Any> {
     val fuelHeaders = mutableMapOf<String, Any>()
     forEach { key, values ->
         fuelHeaders[key] = values
     }
-    extraHeaders.forEach {
+    val extra = extraHeaders.filterValues { it != null }.mapValues { it.value!! }
+    val remove = extraHeaders.filterValues { it == null }.keys
+
+    extra.forEach {
         fuelHeaders[it.key] = it.value
     }
+    remove.forEach {
+        fuelHeaders.remove(it)
+    }
+
     return fuelHeaders.toMap()
 }
 

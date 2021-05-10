@@ -25,6 +25,8 @@ internal fun Route.K9SakRoute(
         HttpHeaders.Authorization to it
       )}
 
+    val utenAuthorizationHeader = mapOf(HttpHeaders.Authorization to null)
+
     route(Path) {
         post("/api/fordel/journalposter") {
             call.forwardPost(call.toUrl(), accessToken(), logger)
@@ -35,7 +37,7 @@ internal fun Route.K9SakRoute(
         }
 
         get("/internal/health/isReady") {
-            call.forwardGet(call.toUrl(), emptyMap(), logger)
+            call.forwardGet(call.toUrl(), utenAuthorizationHeader, logger)
         }
     }
 }
