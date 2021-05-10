@@ -18,6 +18,7 @@
     "DOKARKIV_PROXY_BASE_URL": "https://dokarkivproxy-q1.nais.preprod.local",
     "OPEN_AM_WELL_KNOWN_URL": "https://isso-q.adeo.no/isso/oauth2/.well-known/openid-configuration",
     "K9_SAK_BASE_URL": "https://k9-sak.nais.preprod.local/k9/sak",
+    "SAF_BASE_URL": "https://saf-q1.nais.preprod.local",
     "LDAP_URL": "ldaps://ldapgw.preprod.local",
     "LDAP_SEARCH_BASE": "ou=NAV,ou=BusinessUnits,dc=preprod,dc=local"
   }

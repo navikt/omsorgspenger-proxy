@@ -109,6 +109,10 @@ internal fun Application.app(applicationContext: ApplicationContext = Applicatio
                 config = Config.K9Sak(applicationContext.env),
                 stsClient = stsClient
             )
+            SafRoute(
+                config = Config.SAF(applicationContext.env),
+                stsClient = stsClient
+            )
         }
     }
 }

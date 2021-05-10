@@ -18,6 +18,7 @@
     "DOKARKIV_PROXY_BASE_URL": "https://dokarkivproxy.nais.adeo.no",
     "OPEN_AM_WELL_KNOWN_URL": "https://isso.adeo.no/isso/oauth2/.well-known/openid-configuration",
     "K9_SAK_BASE_URL": "https://k9-sak.nais.adeo.no/k9/sak",
+    "SAF_BASE_URL": "https://saf.nais.adeo.no",
     "LDAP_URL": "ldaps://ldapgw.adeo.no",
     "LDAP_SEARCH_BASE": "ou=NAV,ou=BusinessUnits,dc=adeo,dc=no"
   }

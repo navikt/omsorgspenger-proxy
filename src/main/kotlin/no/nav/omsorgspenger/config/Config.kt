@@ -13,6 +13,10 @@ internal object Config {
         internal val url = env.getOrFail("PDL_BASE_URL")
     }
 
+    internal class SAF(env: Map<String, String>) {
+        internal val url = env.getOrFail("SAF_BASE_URL")
+    }
+
     internal class Oppgave(env: Map<String, String>) {
         internal val url = env.getOrFail("OPPGAVE_BASE_URL")
     }
