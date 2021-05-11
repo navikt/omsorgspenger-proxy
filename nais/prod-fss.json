@@ -17,7 +17,8 @@
     "OPPGAVE_BASE_URL": "https://oppgave.nais.adeo.no",
     "DOKARKIV_PROXY_BASE_URL": "https://dokarkivproxy.nais.adeo.no",
     "OPEN_AM_WELL_KNOWN_URL": "https://isso.adeo.no/isso/oauth2/.well-known/openid-configuration",
-    "AZURE_APP_AUTHORIZED_CLIENT_IDS": "4c4e6e55-2063-4507-8fd6-5d5a4604c0db,131a5e14-d559-47e1-940f-422f258bcecd,d9317ed3-d660-4106-8a84-41034ad64337,4682bf76-0e2a-471d-81c2-b53208311fec,4a3413f2-5440-443f-af37-c03d2dbfffbc",
+    "K9_SAK_BASE_URL": "https://k9-sak.nais.adeo.no/k9/sak",
+    "SAF_BASE_URL": "https://saf.nais.adeo.no",
     "LDAP_URL": "ldaps://ldapgw.adeo.no",
     "LDAP_SEARCH_BASE": "ou=NAV,ou=BusinessUnits,dc=adeo,dc=no"
   }

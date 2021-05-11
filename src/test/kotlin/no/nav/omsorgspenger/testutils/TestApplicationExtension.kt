@@ -11,6 +11,7 @@ import no.nav.helse.dusseldorf.testsupport.wiremock.getNaisStsTokenUrl
 import no.nav.helse.dusseldorf.testsupport.wiremock.getNaisStsWellKnownUrl
 import no.nav.omsorgspenger.ApplicationContext
 import no.nav.omsorgspenger.app
+import no.nav.omsorgspenger.testutils.mocks.*
 import no.nav.omsorgspenger.testutils.mocks.MockedLdapGateway
 import no.nav.omsorgspenger.testutils.mocks.dokarkivproxyUrl
 import no.nav.omsorgspenger.testutils.mocks.oppgaveUrl
@@ -35,7 +36,9 @@ internal class TestApplicationExtension : ParameterResolver {
                 "DOKARKIV_PROXY_BASE_URL" to mockedEnvironment.wireMockServer.dokarkivproxyUrl(),
                 "AZURE_APP_WELL_KNOWN_URL" to mockedEnvironment.wireMockServer.getAzureV2WellKnownUrl(),
                 "AZURE_APP_CLIENT_ID" to "omsorgspenger-proxy",
-                "AZURE_APP_AUTHORIZED_CLIENT_IDS" to "allowed-1,allowed-2",
+                "AZURE_APP_PRE_AUTHORIZED_APPS" to """[{"clientId":"allowed-1"},{"clientId":"allowed-2"}]""",
+                "K9_SAK_BASE_URL" to mockedEnvironment.wireMockServer.k9SakUrl(),
+                "SAF_BASE_URL" to mockedEnvironment.wireMockServer.safUrl(),
                 "OPEN_AM_WELL_KNOWN_URL" to mockedEnvironment.wireMockServer.getNaisStsWellKnownUrl()
             )
         ).build()
