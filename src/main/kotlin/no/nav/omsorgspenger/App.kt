@@ -88,7 +88,9 @@ internal fun Application.app(applicationContext: ApplicationContext = Applicatio
                 stsClient = stsClient,
                 openAm = openAm
             )
-
+            InfotrygdGrunnlagPaaroerendeSykdomRoute(
+                config = Config.InfotrygdGrunnlagPaaroerendeSykdom(applicationContext.env)
+            )
         }
         authenticate(*issuers.azureProxyScoped()) {
             OppgaveRoute(
