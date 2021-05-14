@@ -36,6 +36,10 @@ internal fun Route.K9SakRoute(
             call.forwardPost(call.toUrl(), accessToken(), logger)
         }
 
+        post("/api/fagsak/match") {
+            call.forwardPost(call.toUrl(), accessToken(), logger)
+        }
+
         get("/internal/health/isReady") {
             call.forwardGet(call.toUrl(), utenAuthorizationHeader, logger)
         }
