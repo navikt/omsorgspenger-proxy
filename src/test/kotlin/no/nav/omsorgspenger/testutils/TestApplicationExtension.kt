@@ -38,6 +38,7 @@ internal class TestApplicationExtension : ParameterResolver {
                 "AZURE_APP_CLIENT_ID" to "omsorgspenger-proxy",
                 "AZURE_APP_PRE_AUTHORIZED_APPS" to """[{"clientId":"allowed-1"},{"clientId":"allowed-2"}]""",
                 "K9_SAK_BASE_URL" to mockedEnvironment.wireMockServer.k9SakUrl(),
+                "INFOTRYGD_GRUNNLAG_PAAROERENDE_SYKDOM_BASE_URL" to mockedEnvironment.wireMockServer.infotrygdGrunnlagPaaroerendeSykdomUrl(),
                 "SAF_BASE_URL" to mockedEnvironment.wireMockServer.safUrl(),
                 "OPEN_AM_WELL_KNOWN_URL" to mockedEnvironment.wireMockServer.getNaisStsWellKnownUrl()
             )

@@ -33,6 +33,10 @@ internal object Config {
         internal val url = env.getOrFail("DOKARKIV_PROXY_BASE_URL")
     }
 
+    internal class InfotrygdGrunnlagPaaroerendeSykdom(env: Map<String, String>) {
+        internal val url = env.getOrFail("INFOTRYGD_GRUNNLAG_PAAROERENDE_SYKDOM_BASE_URL")
+    }
+
     internal class OpenAM(env: Map<String, String>) {
         internal val wellKnownUri = URI(env.getOrFail("OPEN_AM_WELL_KNOWN_URL"))
     }
@@ -48,8 +52,8 @@ internal object Config {
         internal val searchBase = env.getOrFail("LDAP_SEARCH_BASE")
     }
 
-    internal fun Map<String, String>.getOrFail(key: String) = getOrElse(key, {
+    internal fun Map<String, String>.getOrFail(key: String) = getOrElse(key) {
         throw IllegalStateException("Mangler Environment variable $key")
-    })
+    }
 }
 
