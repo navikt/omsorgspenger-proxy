@@ -31,7 +31,7 @@ internal fun Route.SakRoute(
         get {
             call.forwardGet(call.toUrl(), accessToken(), logger)
         }
-        post ("$Path{...}") {
+        post {
             call.forwardPost(call.toUrl(), accessToken(), logger)
         }
     }
