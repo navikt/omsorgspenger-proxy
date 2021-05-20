@@ -115,6 +115,10 @@ internal fun Application.app(applicationContext: ApplicationContext = Applicatio
                 config = Config.SAF(applicationContext.env),
                 stsClient = stsClient
             )
+            SakRoute(
+                config = Config.Sak(applicationContext.env),
+                stsClient = stsClient
+            )
         }
     }
 }

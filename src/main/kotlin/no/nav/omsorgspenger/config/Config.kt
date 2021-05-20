@@ -25,6 +25,10 @@ internal object Config {
         internal val url = env.getOrFail("K9_SAK_BASE_URL")
     }
 
+    internal class Sak(env: Map<String, String>) {
+        internal val url = env.getOrFail("SAK_BASE_URL")
+    }
+
     internal class STS(env: Map<String, String>) {
         internal val url = env.getOrFail("STS_TOKEN_URL")
     }
