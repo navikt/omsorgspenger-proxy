@@ -6,6 +6,7 @@ import io.ktor.request.uri
 import io.ktor.routing.Route
 import io.ktor.routing.put
 import io.ktor.routing.route
+import no.nav.omsorgspenger.NavConsumerToken
 import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.forwardPut
 import no.nav.omsorgspenger.sts.StsRestClient
@@ -24,7 +25,8 @@ internal fun Route.DokarkivproxyRoute(
 
             val stsToken = stsClient.token().asAuthoriationHeader()
             val extraHeaders = mapOf(
-                HttpHeaders.Authorization to stsToken
+                HttpHeaders.Authorization to stsToken,
+                NavConsumerToken to stsToken
             )
 
             call.forwardPut("$dokarkivproxyUrl$path", extraHeaders, logger)
