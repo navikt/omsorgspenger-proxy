@@ -1,6 +1,7 @@
 package no.nav.omsorgspenger.routes
 
-import io.ktor.application.call
+import com.auth0.jwt.JWT
+import io.ktor.application.*
 import io.ktor.http.HttpHeaders
 import io.ktor.request.uri
 import io.ktor.routing.Route
@@ -23,9 +24,19 @@ internal fun Route.PdlRoute(
     pdlConfig: Config.PDL,
     authConfig: Config.Auth,
     stsClient: StsRestClient,
-    openAm: OpenAm
-) {
+    openAm: OpenAm) {
+
+    fun ApplicationCall.feilBruk() = kotlin.runCatching {
+        val jwt = request.headers[HttpHeaders.Authorization]!!.removePrefix("Bearer ")
+        val clientId = JWT.decode(jwt).getClaim("azp").asString()
+        logger.error("Feil bruk av PDL proxy. URL=[${request.uri}] ClientId=[$clientId]")
+    }.fold(
+        onSuccess = {},
+        onFailure = { logger.error("Feil bruk av PDL proxy URL=[${request.uri}], ClientId=[n/a]", it)}
+    )
+
     route("/pdl{...}") {
+
         post {
             val pdlUrl = pdlConfig.url
             val path = call.request.uri.removePrefix("/pdl")
@@ -36,8 +47,8 @@ internal fun Route.PdlRoute(
 
             val authorizationHeader = when {
                 erScopetTilOmsorgspengerProxy && call.harOpenAmToken() -> openAm.verifisertHeaderValue(call)
-                erScopetTilOmsorgspengerProxy -> stsAuthorizationHeader
-                else -> call.request.headers[HttpHeaders.Authorization]!!
+                erScopetTilOmsorgspengerProxy -> stsAuthorizationHeader.also { call.feilBruk() }
+                else -> call.request.headers[HttpHeaders.Authorization]!!.also { call.feilBruk() }
             }
 
             val extraHeaders = mapOf(

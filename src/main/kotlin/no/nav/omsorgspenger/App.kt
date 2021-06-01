@@ -43,7 +43,8 @@ internal fun Application.app(applicationContext: ApplicationContext = Applicatio
     install(CallId) {
         fromFirstNonNullHeader(headers = listOf(
             HttpHeaders.XCorrelationId,
-            "Nav-Call-Id"
+            "Nav-Call-Id",
+            "Nav-CallId"
         ))
     }
 

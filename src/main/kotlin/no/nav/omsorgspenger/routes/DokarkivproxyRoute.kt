@@ -25,8 +25,7 @@ internal fun Route.DokarkivproxyRoute(
 
             val stsToken = stsClient.token().asAuthoriationHeader()
             val extraHeaders = mapOf(
-                HttpHeaders.Authorization to stsToken,
-                NavConsumerToken to stsToken
+                HttpHeaders.Authorization to stsToken
             )
 
             call.forwardPut("$dokarkivproxyUrl$path", extraHeaders, logger)
