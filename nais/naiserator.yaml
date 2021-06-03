@@ -26,7 +26,6 @@ spec:
   accessPolicy:
     inbound:
       rules:
-          cluster: {{clusterGcp}}
         - application: omsorgspenger-journalforing
           namespace: omsorgspenger
           cluster: {{clusterGcp}}
