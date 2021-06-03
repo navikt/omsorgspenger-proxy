@@ -7,10 +7,10 @@ import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import no.nav.omsorgspenger.testutils.AuthorizationHeaders.medAzure
+import no.nav.omsorgspenger.testutils.AuthorizationHeaders.medOpenAm
 import no.nav.omsorgspenger.testutils.TestApplicationExtension
+import no.nav.omsorgspenger.testutils.mocks.PdlOk
 import no.nav.omsorgspenger.testutils.mocks.ProxiedHeader
-import no.nav.omsorgspenger.testutils.mocks.likeHeadersBody
-import no.nav.omsorgspenger.testutils.mocks.ulikeHeadersBody
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -31,7 +31,23 @@ internal class PdlRouteTest(
     }
 
     @Test
-    fun `token utstedt til oms-proxy proxyer request`() {
+    fun `token utstedt til oms-proxy med open-am-token proxyer request`() {
+        with(testApplicationEngine) {
+            handleRequest(HttpMethod.Post, pdlUrl) {
+                medAzure(clientId = "allowed-1")
+                addHeader(HttpHeaders.ContentType, "application/json")
+                medOpenAm()
+                addHeader(ProxiedHeader, "anything")
+                setBody("{}")
+            }.apply {
+                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
+                assertThat(response.content).isEqualTo(PdlOk)
+            }
+        }
+    }
+
+    @Test
+    fun `token utstedt til oms-proxy uten open-am-token feiler`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Post, pdlUrl) {
                 medAzure(clientId = "allowed-1")
@@ -39,8 +55,7 @@ internal class PdlRouteTest(
                 addHeader(ProxiedHeader, "anything")
                 setBody("{}")
             }.apply {
-                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
-                assertThat(response.content).isEqualTo(likeHeadersBody)
+                assertThat(response.status()).isEqualTo(HttpStatusCode.Forbidden)
             }
         }
     }
@@ -61,7 +76,7 @@ internal class PdlRouteTest(
 
 
     @Test
-    fun `token med annen audience propagerer auth header og proxyer request`() {
+    fun `token med annen audience feiler`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Post, pdlUrl) {
                 medAzure(audience = "ikke-omsorgspenger-proxy")
@@ -69,8 +84,7 @@ internal class PdlRouteTest(
                 addHeader(ProxiedHeader, "anything")
                 setBody("{}")
             }.apply {
-                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
-                assertThat(response.content).isEqualTo(ulikeHeadersBody)
+                assertThat(response.status()).isEqualTo(HttpStatusCode.Forbidden)
             }
         }
     }

@@ -1,9 +1,9 @@
 package no.nav.omsorgspenger.routes
 
-import com.auth0.jwt.JWT
 import io.ktor.application.*
-import io.ktor.http.HttpHeaders
+import io.ktor.http.*
 import io.ktor.request.uri
+import io.ktor.response.*
 import io.ktor.routing.Route
 import io.ktor.routing.options
 import io.ktor.routing.post
@@ -12,7 +12,6 @@ import no.nav.omsorgspenger.NavConsumerToken
 import no.nav.omsorgspenger.OpenAm
 import no.nav.omsorgspenger.OpenAm.Companion.harOpenAmToken
 import no.nav.omsorgspenger.config.Config
-import no.nav.omsorgspenger.erScopetTilOmsorgspengerProxy
 import no.nav.omsorgspenger.forwardOptions
 import no.nav.omsorgspenger.forwardPost
 import no.nav.omsorgspenger.sts.StsRestClient
@@ -22,18 +21,8 @@ private val logger = LoggerFactory.getLogger("no.nav.PdlRoute")
 
 internal fun Route.PdlRoute(
     pdlConfig: Config.PDL,
-    authConfig: Config.Auth,
     stsClient: StsRestClient,
     openAm: OpenAm) {
-
-    fun ApplicationCall.feilBruk() = kotlin.runCatching {
-        val jwt = request.headers[HttpHeaders.Authorization]!!.removePrefix("Bearer ")
-        val clientId = JWT.decode(jwt).getClaim("azp").asString()
-        logger.error("Feil bruk av PDL proxy. URL=[${request.uri}] ClientId=[$clientId]")
-    }.fold(
-        onSuccess = {},
-        onFailure = { logger.error("Feil bruk av PDL proxy URL=[${request.uri}], ClientId=[n/a]", it)}
-    )
 
     route("/pdl{...}") {
 
@@ -42,14 +31,13 @@ internal fun Route.PdlRoute(
             val path = call.request.uri.removePrefix("/pdl")
             val fullPdlPath = "$pdlUrl$path"
 
-            val stsAuthorizationHeader = stsClient.token().asAuthoriationHeader()
-            val erScopetTilOmsorgspengerProxy = call.erScopetTilOmsorgspengerProxy(authConfig.azureAppClientId)
-
-            val authorizationHeader = when {
-                erScopetTilOmsorgspengerProxy && call.harOpenAmToken() -> openAm.verifisertHeaderValue(call)
-                erScopetTilOmsorgspengerProxy -> stsAuthorizationHeader.also { call.feilBruk() }
-                else -> call.request.headers[HttpHeaders.Authorization]!!.also { call.feilBruk() }
+            if (!call.harOpenAmToken()) {
+                logger.error("Requestet uten OpenAm-Token")
+                return@post call.respond(HttpStatusCode.Forbidden)
             }
+
+            val stsAuthorizationHeader = stsClient.token().asAuthoriationHeader()
+            val authorizationHeader = openAm.verifisertHeaderValue(call)
 
             val extraHeaders = mapOf(
                 HttpHeaders.Authorization to authorizationHeader,
