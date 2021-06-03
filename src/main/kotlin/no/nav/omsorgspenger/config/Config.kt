@@ -45,10 +45,6 @@ internal object Config {
         internal val wellKnownUri = URI(env.getOrFail("OPEN_AM_WELL_KNOWN_URL"))
     }
 
-    internal class Auth(env: Map<String, String>) {
-        internal val azureAppClientId = env.getOrFail("AZURE_APP_CLIENT_ID")
-    }
-
     internal class Ldap(env: Map<String, String>) {
         internal val url = env.getOrFail("LDAP_URL")
         internal val username = env.getOrFail("LDAP_USERNAME")

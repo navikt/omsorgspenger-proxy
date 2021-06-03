@@ -83,17 +83,18 @@ internal fun Application.app(applicationContext: ApplicationContext = Applicatio
         DefaultProbeRoutes()
         OpenAmPublicRoute(openAm = openAm)
         authenticate(*issuers.azureAnyScoped()) {
-            PdlRoute(
-                pdlConfig = Config.PDL(applicationContext.env),
-                authConfig = Config.Auth(applicationContext.env),
-                stsClient = stsClient,
-                openAm = openAm
-            )
+            // Underliggende tjenester støtter Azure-tokens, men ikke tilgjengeliggjort i GCP
             InfotrygdGrunnlagPaaroerendeSykdomRoute(
                 config = Config.InfotrygdGrunnlagPaaroerendeSykdom(applicationContext.env)
             )
         }
         authenticate(*issuers.azureProxyScoped()) {
+            // Underliggende tjenester støtter ikke Azure-tokens, veksler til tokens de støtter.
+            PdlRoute(
+                pdlConfig = Config.PDL(applicationContext.env),
+                stsClient = stsClient,
+                openAm = openAm
+            )
             OppgaveRoute(
                 oppgaveConfig = Config.Oppgave(applicationContext.env),
                 stsClient = stsClient

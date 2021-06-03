@@ -16,20 +16,20 @@ internal class OpenAm(
     private val issuerOgJwksUri = openAmConfig.wellKnownUri.discover()
     internal val jwksUri = issuerOgJwksUri.second
 
-    private val jwtVerifier = {
-        JwtVerifier(
-            issuer = Issuer(
-                alias = "open_am",
-                issuer = issuerOgJwksUri.first,
-                jwksUri = issuerOgJwksUri.second,
-                audience = null
-            ),
-            additionalClaimRules = setOf(EnforceEqualsOrContains(
+    private val jwtVerifier = JwtVerifier(
+        issuer = Issuer(
+            alias = "open_am",
+            issuer = issuerOgJwksUri.first,
+            jwksUri = issuerOgJwksUri.second,
+            audience = null
+        ),
+        additionalClaimRules = setOf(
+            EnforceEqualsOrContains(
                 defaultClaimName = "tokenName",
                 expected = "id_token"
-            ))
+            )
         )
-    }()
+    )
 
     private fun verifisert(call: ApplicationCall) : Pair<String, DecodedJWT> {
         require(call.harOpenAmToken()) {

@@ -1,9 +1,6 @@
 package no.nav.omsorgspenger
 
 import com.auth0.jwt.interfaces.Claim
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.auth.jwt.*
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.dusseldorf.ktor.auth.*
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpGet
@@ -104,6 +101,3 @@ internal object Auth {
         requireNotNull(json.getString("issuer")) to URI(requireNotNull(json.getString("jwks_uri")))
     }}
 }
-
-internal fun ApplicationCall.erScopetTilOmsorgspengerProxy(omsorgspengerProxyClientId: String) =
-    principal<JWTPrincipal>()!!.payload.audience.contains(omsorgspengerProxyClientId)
