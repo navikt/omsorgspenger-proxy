@@ -2,8 +2,9 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val junitJupiterVersion = "5.7.2"
-val dusseldorfVersion = "1.5.4.257334d"
+val dusseldorfVersion = "2.1.6.0-d31132e"
 val ktorVersion = ext.get("ktorVersion").toString()
+val fuelVersion = "2.3.1"
 
 val jsonassertVersion = "1.5.0"
 val assertjVersion = "3.19.0"
@@ -11,7 +12,7 @@ val assertjVersion = "3.19.0"
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.5.0"
+    kotlin("jvm") version "1.5.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
@@ -21,7 +22,7 @@ java {
 }
 
 buildscript {
-    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/257334dab1e72da3cfdb6c3eb0f9f098a3a2b810/gradle/dusseldorf-ktor.gradle.kts")
+    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/d31132e7b259b8f82b510aabe61b05e2b35ff261/gradle/dusseldorf-ktor.gradle.kts")
 }
 
 dependencies {
@@ -30,6 +31,8 @@ dependencies {
     implementation("no.nav.helse:dusseldorf-ktor-auth:$dusseldorfVersion")
     implementation("no.nav.helse:dusseldorf-ktor-core:$dusseldorfVersion")
     implementation("no.nav.helse:dusseldorf-ktor-client:$dusseldorfVersion")
+    implementation("com.github.kittinunf.fuel:fuel:$fuelVersion")
+    implementation("com.github.kittinunf.fuel:fuel-coroutines:$fuelVersion")
     implementation("no.nav.helse:dusseldorf-oauth2-client:$dusseldorfVersion")
     implementation("no.nav.helse:dusseldorf-ktor-metrics:$dusseldorfVersion")
 

@@ -18,7 +18,8 @@ internal class StsRestClient(
         ClientSecretAccessTokenClient(
             clientId = serviceUserConfig.username,
             clientSecret = serviceUserConfig.password,
-            tokenEndpoint = URI(stsConfig.url)
+            tokenEndpoint = URI(stsConfig.url),
+            authenticationMode = ClientSecretAccessTokenClient.AuthenticationMode.BASIC
         )
     )
 
