@@ -15,24 +15,22 @@ private val logger = LoggerFactory.getLogger("no.nav.DokarkivproxyRoute")
 internal fun Route.DokarkivproxyRoute(
     dokarkivProxyConfig: Config.Dokarkivproxy,
     stsClient: StsRestClient) {
-    val utenAuthorizationHeader = mapOf(HttpHeaders.Authorization to null)
+
+    fun headers() = mapOf(
+        HttpHeaders.Authorization to stsClient.token().asAuthoriationHeader()
+    )
 
     route("/dokarkivproxy{...}") {
         put {
             val dokarkivproxyUrl = dokarkivProxyConfig.url
             val path = call.request.uri.removePrefix("/dokarkivproxy")
-
-            val stsToken = stsClient.token().asAuthoriationHeader()
-            val extraHeaders = mapOf(
-                HttpHeaders.Authorization to stsToken
-            )
-
-            call.forwardPut("$dokarkivproxyUrl$path", extraHeaders, logger)
+            call.forwardPut("$dokarkivproxyUrl$path", headers(), logger)
         }
 
-        get("/isReady") {
+        get {
             val dokarkivproxyUrl = dokarkivProxyConfig.url
-            call.forwardGet("$dokarkivproxyUrl/isReady", utenAuthorizationHeader, logger)
+            val path = call.request.uri.removePrefix("/dokarkivproxy")
+            call.forwardGet("$dokarkivproxyUrl$path", headers(), logger)
         }
     }
 }
