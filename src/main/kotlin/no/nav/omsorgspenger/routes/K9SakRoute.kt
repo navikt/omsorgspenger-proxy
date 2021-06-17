@@ -36,6 +36,10 @@ internal fun Route.K9SakRoute(
             call.forwardPost(call.toUrl(), accessToken(), logger)
         }
 
+        post("/api/fagsak/siste") {
+            call.forwardPost(call.toUrl(), accessToken(), logger)
+        }
+
         post("/api/fordel/psb-infotrygd/finnes") {
             call.forwardPost(call.toUrl(), accessToken(), logger)
         }
