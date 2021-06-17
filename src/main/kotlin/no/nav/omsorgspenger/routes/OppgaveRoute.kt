@@ -3,12 +3,10 @@ package no.nav.omsorgspenger.routes
 import io.ktor.application.call
 import io.ktor.http.HttpHeaders
 import io.ktor.request.uri
-import io.ktor.routing.Route
-import io.ktor.routing.get
-import io.ktor.routing.post
-import io.ktor.routing.route
+import io.ktor.routing.*
 import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.forwardGet
+import no.nav.omsorgspenger.forwardPatch
 import no.nav.omsorgspenger.forwardPost
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.slf4j.LoggerFactory
@@ -30,6 +28,16 @@ internal fun Route.OppgaveRoute(
             )
 
             call.forwardPost("$oppgaveUrl$path", extraHeaders, logger)
+        }
+
+        patch {
+            val path = call.request.uri.removePrefix("/oppgave")
+            val stsToken = stsClient.token().asAuthoriationHeader()
+            val extraHeaders = mapOf(
+                HttpHeaders.Authorization to stsToken
+            )
+
+            call.forwardPatch("$oppgaveUrl$path", extraHeaders, logger)
         }
 
         get {

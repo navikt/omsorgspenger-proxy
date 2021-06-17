@@ -1,13 +1,10 @@
 package no.nav.omsorgspenger
 
-import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.*
 import com.github.kittinunf.fuel.core.Method
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.Response
 import com.github.kittinunf.fuel.coroutines.awaitByteArrayResponseResult
-import com.github.kittinunf.fuel.httpGet
-import com.github.kittinunf.fuel.httpPost
-import com.github.kittinunf.fuel.httpPut
 import io.ktor.application.ApplicationCall
 import io.ktor.http.ContentType
 import io.ktor.http.Headers
@@ -36,6 +33,15 @@ internal suspend fun ApplicationCall.forwardPut(toUrl: String, extraHeaders: Map
             .body(receive<ByteArray>())
 
     forwardRequest(putRequest, extraHeaders, logger)
+}
+
+internal suspend fun ApplicationCall.forwardPatch(toUrl: String, extraHeaders: Map<String, Any?>, logger: Logger) {
+    val parameters = request.queryParameters.toFuel()
+    val patchRequest = toUrl
+        .httpPatch(parameters)
+        .body(receive<ByteArray>())
+
+    forwardRequest(patchRequest, extraHeaders, logger)
 }
 
 internal suspend fun ApplicationCall.forwardGet(toUrl: String, extraHeaders: Map<String, Any?>, logger: Logger) {
