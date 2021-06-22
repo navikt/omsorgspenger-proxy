@@ -41,6 +41,9 @@ internal suspend fun ApplicationCall.forwardPatch(toUrl: String, extraHeaders: M
         .httpPatch(parameters)
         .body(receive<ByteArray>())
 
+    // https://fuel.gitbook.io/documentation/core/fuel#about-patch-requests
+    patchRequest.executionOptions.forceMethods = true
+
     forwardRequest(patchRequest, extraHeaders, logger)
 }
 

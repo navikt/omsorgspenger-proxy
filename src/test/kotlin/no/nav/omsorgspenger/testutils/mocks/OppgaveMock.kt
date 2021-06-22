@@ -39,8 +39,19 @@ private fun WireMockServer.stubOppgaveGet(): WireMockServer {
     return this
 }
 
+private fun WireMockServer.stubOppgavePatch(): WireMockServer {
+    stubFor(
+        WireMock.patch(urlPathMatching(".*$oppgaveUrlPath/patch-request"))
+            .withHeader(HttpHeaders.Authorization, containing("Bearer "))
+            .willReturn(aResponse().withStatus(204))
+    )
+    return this
+}
+
+
 internal fun WireMockServer.oppgaveUrl(): String = baseUrl() + oppgaveUrlPath
 
 internal fun WireMockServer.stubOppgave() = this
     .stubOppgaveGet()
     .stubOppgavePost()
+    .stubOppgavePatch()

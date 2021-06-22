@@ -58,6 +58,20 @@ internal class OppgaveRouteTest(
     }
 
     @Test
+    fun `PATCH - token utstedt til oms-proxy proxyer request`() {
+        with(testApplicationEngine) {
+            handleRequest(HttpMethod.Patch, "/oppgave/patch-request") {
+                medAzure(clientId = "allowed-2")
+                addHeader(HttpHeaders.ContentType, "application/json")
+                addHeader(ProxiedHeader, "anything")
+                setBody("{}")
+            }.apply {
+                assertThat(response.status()).isEqualTo(HttpStatusCode.NoContent)
+            }
+        }
+    }
+
+    @Test
     fun `token scopet til annen tjeneste gir 403`() {
         with(testApplicationEngine) {
             handleRequest(HttpMethod.Get, oppgaveUrl) {
