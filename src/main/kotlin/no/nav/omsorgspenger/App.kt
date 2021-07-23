@@ -7,7 +7,6 @@ import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.jackson.jackson
 import io.ktor.routing.Routing
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.dusseldorf.ktor.auth.AuthStatusPages
 import no.nav.helse.dusseldorf.ktor.auth.multipleJwtIssuers
 import no.nav.helse.dusseldorf.ktor.core.*
@@ -29,7 +28,6 @@ import no.nav.omsorgspenger.sts.StsRestClient
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
-@KtorExperimentalAPI
 internal fun Application.app(applicationContext: ApplicationContext = ApplicationContext.Builder().build()) {
     install(ContentNegotiation) {
         jackson()

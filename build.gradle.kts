@@ -2,27 +2,23 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val junitJupiterVersion = "5.7.2"
-val dusseldorfVersion = "2.1.6.0-d31132e"
-val ktorVersion = ext.get("ktorVersion").toString()
+val dusseldorfVersion = "2.1.6.0-1516d10"
+val ktorVersion = "1.6.1"
 val fuelVersion = "2.3.1"
 
 val jsonassertVersion = "1.5.0"
-val assertjVersion = "3.19.0"
+val assertjVersion = "3.20.2"
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.5.10"
+    kotlin("jvm") version "1.5.20"
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_15
-    targetCompatibility = JavaVersion.VERSION_15
-}
-
-buildscript {
-    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/d31132e7b259b8f82b510aabe61b05e2b35ff261/gradle/dusseldorf-ktor.gradle.kts")
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
 }
 
 dependencies {
@@ -33,6 +29,7 @@ dependencies {
     implementation("no.nav.helse:dusseldorf-ktor-client:$dusseldorfVersion")
     implementation("com.github.kittinunf.fuel:fuel:$fuelVersion")
     implementation("com.github.kittinunf.fuel:fuel-coroutines:$fuelVersion")
+    implementation("com.github.kittinunf.result:result:4.0.0")
     implementation("no.nav.helse:dusseldorf-oauth2-client:$dusseldorfVersion")
     implementation("no.nav.helse:dusseldorf-ktor-metrics:$dusseldorfVersion")
 
@@ -58,17 +55,18 @@ repositories {
             password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
         }
     }
+    maven("https://jitpack.io")
     mavenCentral()
 }
 
 tasks {
 
     withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "15"
+        kotlinOptions.jvmTarget = "16"
     }
 
     named<KotlinCompile>("compileTestKotlin") {
-        kotlinOptions.jvmTarget = "15"
+        kotlinOptions.jvmTarget = "16"
     }
 
 
@@ -92,6 +90,6 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "7.0.2"
+        gradleVersion = "7.1.1"
     }
 }
