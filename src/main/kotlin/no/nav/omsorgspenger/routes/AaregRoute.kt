@@ -6,8 +6,6 @@ import io.ktor.request.uri
 import io.ktor.routing.*
 import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.forwardGet
-import no.nav.omsorgspenger.forwardPatch
-import no.nav.omsorgspenger.forwardPost
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.slf4j.LoggerFactory
 
