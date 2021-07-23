@@ -9,6 +9,10 @@ internal object Config {
         internal val password = env.getOrFail("password")
     }
 
+    internal class AAREG(env: Map<String, String>) {
+        internal val url = env.getOrFail("AAREG_BASE_URL")
+    }
+
     internal class PDL(env: Map<String, String>) {
         internal val url = env.getOrFail("PDL_BASE_URL")
     }
