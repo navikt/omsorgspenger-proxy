@@ -1,10 +1,10 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  name: {{app}}
-  namespace: {{namespace}}
+  name: omsorgspenger-proxy
+  namespace: omsorgspenger
   labels:
-    team: {{team}}
+    team: omsorgspenger
 spec:
   image: {{ image }}
   port: 8080
@@ -37,6 +37,9 @@ spec:
           cluster: {{clusterGcp}}
         - application: k9-punsjbolle
           namespace: omsorgspenger
+          cluster: {{clusterGcp}}
+        - application: sif-inntektsmelding-api
+          namespace: team-sifinntektsmelding
           cluster: {{clusterGcp}}
   resources:
     limits:
