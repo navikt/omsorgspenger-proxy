@@ -23,13 +23,10 @@ internal fun Route.AaregRoute(
         get {
             val stsToken = stsClient.token().asAuthoriationHeader()
             val path = call.request.uri.removePrefix("/aareg")
-            val personIdent = call.request.headers["Nav-Personident"]
-            val maskinportenToken = call.request.headers["Authorization"]
 
             val extraHeaders = mapOf(
-                HttpHeaders.Authorization to maskinportenToken,
-                "Nav-Consumer-Token" to stsToken,
-                "Nav-Personident" to personIdent
+                HttpHeaders.Authorization to stsToken,
+                "Nav-Consumer-Token" to stsToken
             )
 
             call.forwardGet("$aaregUrl$path", extraHeaders, logger)
