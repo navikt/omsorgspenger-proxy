@@ -6,6 +6,8 @@ import io.ktor.request.uri
 import io.ktor.routing.*
 import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.forwardGet
+import no.nav.omsorgspenger.forwardPatch
+import no.nav.omsorgspenger.forwardPost
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.slf4j.LoggerFactory
 
@@ -21,8 +23,10 @@ internal fun Route.AaregRoute(
         get {
             val stsToken = stsClient.token().asAuthoriationHeader()
             val path = call.request.uri.removePrefix("/aareg")
+
             val extraHeaders = mapOf(
-                HttpHeaders.Authorization to stsToken
+                HttpHeaders.Authorization to stsToken,
+                "Nav-Consumer-Token" to stsToken
             )
 
             call.forwardGet("$aaregUrl$path", extraHeaders, logger)
