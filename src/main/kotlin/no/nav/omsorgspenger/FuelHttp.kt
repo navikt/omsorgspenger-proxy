@@ -36,18 +36,6 @@ internal object FuelHttp {
         forwardRequest(putRequest, extraHeaders, logger)
     }
 
-    internal suspend fun ApplicationCall.forwardPatch(toUrl: String, extraHeaders: Map<String, Any?>, logger: Logger) {
-        val parameters = request.queryParameters.toFuel()
-        val patchRequest = toUrl
-            .httpPatch(parameters)
-            .body(receive<ByteArray>())
-
-        // https://fuel.gitbook.io/documentation/core/fuel#about-patch-requests
-        patchRequest.executionOptions.forceMethods = true
-
-        forwardRequest(patchRequest, extraHeaders, logger)
-    }
-
     internal suspend fun ApplicationCall.forwardGet(toUrl: String, extraHeaders: Map<String, Any?>, logger: Logger) {
         val parameters = request.queryParameters.toFuel()
         val postRequest = toUrl

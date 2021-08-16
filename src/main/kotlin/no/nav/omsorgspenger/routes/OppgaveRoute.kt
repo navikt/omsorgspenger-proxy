@@ -6,8 +6,8 @@ import io.ktor.request.uri
 import io.ktor.routing.*
 import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.FuelHttp.forwardGet
-import no.nav.omsorgspenger.FuelHttp.forwardPatch
 import no.nav.omsorgspenger.FuelHttp.forwardPost
+import no.nav.omsorgspenger.OkHttp.forwardPatch
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.slf4j.LoggerFactory
 
@@ -37,7 +37,7 @@ internal fun Route.OppgaveRoute(
                 HttpHeaders.Authorization to stsToken
             )
 
-            call.forwardPatch("$oppgaveUrl$path", extraHeaders, logger)
+            call.forwardPatch("$oppgaveUrl$path", extraHeaders)
         }
 
         get {
