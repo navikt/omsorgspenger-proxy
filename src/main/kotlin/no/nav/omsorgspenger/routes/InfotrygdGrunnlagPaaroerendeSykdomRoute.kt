@@ -4,7 +4,7 @@ import io.ktor.application.*
 import io.ktor.request.*
 import io.ktor.routing.*
 import no.nav.omsorgspenger.config.Config
-import no.nav.omsorgspenger.forwardGet
+import no.nav.omsorgspenger.FuelHttp.forwardGet
 import org.slf4j.LoggerFactory
 
 private const val Path = "/infotrygd-grunnlag-paaroerende-sykdom"
