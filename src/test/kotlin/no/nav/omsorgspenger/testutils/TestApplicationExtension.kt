@@ -38,6 +38,7 @@ internal class TestApplicationExtension : ParameterResolver {
                 "K9_SAK_BASE_URL" to mockedEnvironment.wireMockServer.k9SakUrl(),
                 "SAK_BASE_URL" to mockedEnvironment.wireMockServer.sakUrl(),
                 "INFOTRYGD_GRUNNLAG_PAAROERENDE_SYKDOM_BASE_URL" to mockedEnvironment.wireMockServer.infotrygdGrunnlagPaaroerendeSykdomUrl(),
+                "K9_INFOTRYGD_BASE_URL" to mockedEnvironment.wireMockServer.infotrygdGrunnlagPaaroerendeSykdomUrl(),
                 "SAF_BASE_URL" to mockedEnvironment.wireMockServer.safUrl(),
                 "OPEN_AM_WELL_KNOWN_URL" to mockedEnvironment.wireMockServer.getNaisStsWellKnownUrl(),
                 "AAREG_BASE_URL" to mockedEnvironment.wireMockServer.aaregUrl()
