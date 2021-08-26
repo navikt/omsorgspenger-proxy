@@ -107,7 +107,9 @@ internal object KtorHttp {
 
                 val responseBody = it.receive<ByteArray>()
                 if (!doRespond || it.status.value >= 500) {
-                    logger.error("Uventet response gjennom proxy: Method=[${httpRequestData.method.value}], Url=[${httpRequestData.url}], HttpStatusCode=[${it.status.value}], Response=[${String(responseBody)}]")
+                    val queryNames = httpRequestData.url.parameters.names()
+                    val urlUtenQueryParameters = "${httpRequestData.url}".substringBefore("?")
+                    logger.error("Uventet response gjennom proxy: Method=[${httpRequestData.method.value}], Url=[${urlUtenQueryParameters}], QueryNames=$queryNames, Accept=[${httpRequestData.headers[HttpHeaders.Accept]}], HttpStatusCode=[${it.status.value}], Response=[${String(responseBody)}]")
                 }
 
                 if (doRespond) {
@@ -160,26 +162,20 @@ internal object KtorHttp {
             socketTimeoutMillis = 20_000
         }
 
-        // Query parameters
-        request.queryParameters.forEach { key, values ->
-            logger.info("Query parameters: $key har ${values.size} verdier.")
-            values.forEach { value ->
-                //builder.parameter(key, value)
-            }
-        }
-
         // Headers
         val extra = extraHeaders.filterValues { it != null }.mapValues { it.value!! }
         val remove = extraHeaders.filterValues { it == null }
-        request.headers.forEach { key, value ->
-            if (key !in remove && !HttpHeaders.isUnsafe(key)) { builder.header(key, value) }
+        request.headers.forEach { key, values ->
+            if (key !in remove && !HttpHeaders.isUnsafe(key)) {
+                values.forEach { value -> builder.header(key, value) }
+            }
         }
         extra.forEach { (key, value) ->
             builder.header(key, value)
         }
 
         if (request.header(HttpHeaders.Accept) == null && !extra.containsKey(HttpHeaders.Accept)) {
-            builder.header(HttpHeaders.Accept, "*/*")
+            builder.header(HttpHeaders.Accept, ContentType.Any)
         }
     }
 }
