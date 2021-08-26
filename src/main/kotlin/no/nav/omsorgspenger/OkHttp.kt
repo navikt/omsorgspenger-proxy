@@ -76,48 +76,63 @@ internal object OkHttp {
             }
         }
     }
-    internal suspend fun ApplicationCall.forwardGet(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) {
-        forward {
-            toUrl.httpGet { builder ->
-                populateBuilder(
-                    builder = builder,
-                    extraHeaders = extraHeaders,
-                    body = null
-                )
-            }
+
+    internal suspend fun ApplicationCall.doGet(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) =
+        toUrl.httpGet { builder ->
+            populateBuilder(
+                builder = builder,
+                extraHeaders = extraHeaders,
+                body = null
+            )
         }
+
+    internal suspend fun ApplicationCall.forwardGet(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) {
+        forward { doGet(toUrl, extraHeaders) }
     }
 
-    private suspend fun ApplicationCall.forward(block: suspend () -> Pair<HttpRequestData, Result<HttpResponse>>) {
+    internal suspend fun ApplicationCall.forward(
+        respondOnError: Boolean = true,
+        block: suspend () -> Pair<HttpRequestData, Result<HttpResponse>>) : Boolean {
         val (httpRequestData, httpResponseResult) = block()
 
-        httpResponseResult.fold(
+        return httpResponseResult.fold(
             onSuccess = {
+                val doRespond = when (respondOnError) {
+                    true -> true
+                    false -> it.status.isSuccess()
+                }
+
                 val responseBody = it.receive<ByteArray>()
                 if (it.status.value >= 500) {
                     logger.error("Uventet response gjennom proxy: Method=[${httpRequestData.method.value}], Url=[${httpRequestData.url}], HttpStatusCode=[${it.status.value}], Response=[${String(responseBody)}]")
                 }
 
-                it.headers.forEach { key, values ->
-                    if (!HttpHeaders.isUnsafe(key)) {
-                        values.forEach { value ->
-                            response.header(key, value)
+                if (doRespond) {
+                    it.headers.forEach { key, values ->
+                        if (!HttpHeaders.isUnsafe(key)) {
+                            values.forEach { value ->
+                                response.header(key, value)
+                            }
                         }
                     }
+                    respondBytes(
+                        contentType = it.contentType(),
+                        status = it.status,
+                        bytes = responseBody
+                    )
                 }
 
-                respondBytes(
-                    contentType = it.contentType(),
-                    status = it.status,
-                    bytes = responseBody
-                )
+                doRespond
             },
             onFailure = {
                 logger.error("Feil ved proxy av request: Method=[${httpRequestData.method.value}], Url=[${httpRequestData.url}]", it)
-                respondText(
-                    status = HttpStatusCode.BadGateway,
-                    text = "Unable to proxy request."
-                )
+                if (respondOnError) {
+                    respondText(
+                        status = HttpStatusCode.BadGateway,
+                        text = "Unable to proxy request."
+                    )
+                }
+                respondOnError
             }
         )
     }
