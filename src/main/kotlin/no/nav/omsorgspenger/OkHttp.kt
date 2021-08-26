@@ -103,7 +103,7 @@ internal object OkHttp {
                 }
 
                 val responseBody = it.receive<ByteArray>()
-                if (it.status.value >= 500) {
+                if (!doRespond || it.status.value >= 500) {
                     logger.error("Uventet response gjennom proxy: Method=[${httpRequestData.method.value}], Url=[${httpRequestData.url}], HttpStatusCode=[${it.status.value}], Response=[${String(responseBody)}]")
                 }
 
