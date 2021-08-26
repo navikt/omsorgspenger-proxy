@@ -173,9 +173,5 @@ internal object KtorHttp {
         extra.forEach { (key, value) ->
             builder.header(key, value)
         }
-
-        if (request.header(HttpHeaders.Accept) == null && !extra.containsKey(HttpHeaders.Accept)) {
-            builder.header(HttpHeaders.Accept, ContentType.Any)
-        }
     }
 }
