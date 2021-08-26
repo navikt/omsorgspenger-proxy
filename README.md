@@ -13,6 +13,7 @@ Tjenesten krever Azure-tokens og veksler til hva den bakomforliggende tjenesten 
 * /pdl (post & options) - Kun når Open-AM token er i bruk - ellers kan må gå rett mot PDL.
 * /saf/graphql (post)
 * /sak (get & post)
+* /aareg (get)
 
 ### Bruk
 omsorgspenger-proxy har en route per proxyet tjeneste, som beskrevet over. Alt etter dette i url'en blir proxyet videre.   

@@ -5,7 +5,6 @@ import com.typesafe.config.ConfigFactory
 import io.ktor.config.*
 import io.ktor.server.engine.stop
 import io.ktor.server.testing.*
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV2WellKnownUrl
 import no.nav.helse.dusseldorf.testsupport.wiremock.getNaisStsTokenUrl
 import no.nav.helse.dusseldorf.testsupport.wiremock.getNaisStsWellKnownUrl
@@ -22,7 +21,6 @@ import org.junit.jupiter.api.extension.ParameterResolver
 import java.util.concurrent.TimeUnit
 
 internal class TestApplicationExtension : ParameterResolver {
-    @KtorExperimentalAPI
     internal companion object {
         private val mockedEnvironment = MockedEnvironment().start()
         private val applicationContext = ApplicationContext.Builder(
@@ -46,7 +44,6 @@ internal class TestApplicationExtension : ParameterResolver {
             )
         ).build()
 
-        @KtorExperimentalAPI
         internal val testApplicationEngine = TestApplicationEngine(
             environment = createTestEnvironment {
                 config = HoconApplicationConfig(ConfigFactory.load().withoutPath("ktor.application.modules"))
@@ -74,7 +71,6 @@ internal class TestApplicationExtension : ParameterResolver {
         return støttedeParametre.contains(parameterContext.parameter.type)
     }
 
-    @KtorExperimentalAPI
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return when (parameterContext.parameter.type) {
             TestApplicationEngine::class.java -> testApplicationEngine

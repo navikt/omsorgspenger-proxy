@@ -8,16 +8,16 @@ import io.ktor.routing.Route
 import io.ktor.routing.options
 import io.ktor.routing.post
 import io.ktor.routing.route
-import no.nav.omsorgspenger.NavConsumerToken
 import no.nav.omsorgspenger.OpenAm
 import no.nav.omsorgspenger.OpenAm.Companion.harOpenAmToken
 import no.nav.omsorgspenger.config.Config
-import no.nav.omsorgspenger.forwardOptions
-import no.nav.omsorgspenger.forwardPost
+import no.nav.omsorgspenger.FuelHttp.forwardOptions
+import no.nav.omsorgspenger.FuelHttp.forwardPost
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("no.nav.PdlRoute")
+private const val NavConsumerToken = "Nav-Consumer-Token"
 
 internal fun Route.PdlRoute(
     pdlConfig: Config.PDL,

@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.containing
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
 import com.github.tomakehurst.wiremock.matching.AnythingPattern
+import com.github.tomakehurst.wiremock.matching.EqualToPattern
 import io.ktor.http.HttpHeaders
 
 private const val oppgaveUrlPath = "/oppgave-mock"
@@ -43,7 +44,11 @@ private fun WireMockServer.stubOppgavePatch(): WireMockServer {
     stubFor(
         WireMock.patch(urlPathMatching(".*$oppgaveUrlPath/patch-request"))
             .withHeader(HttpHeaders.Authorization, containing("Bearer "))
-            .willReturn(aResponse().withStatus(204))
+            .withRequestBody(EqualToPattern("{}"))
+            .willReturn(aResponse()
+                .withStatus(204)
+                .withHeader("X-Test-Header", "Er-Satt")
+            )
     )
     return this
 }

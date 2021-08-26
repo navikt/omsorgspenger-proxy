@@ -1,9 +1,9 @@
 package no.nav.omsorgspenger.ldap
 
 import no.nav.omsorgspenger.ldap.DefaultLdapGateway.Companion.gruppeResolver
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import javax.naming.directory.BasicAttribute
-import kotlin.test.assertEquals
 
 internal class GruppeResolverTest {
 

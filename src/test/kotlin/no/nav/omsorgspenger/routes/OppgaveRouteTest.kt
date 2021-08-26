@@ -67,6 +67,7 @@ internal class OppgaveRouteTest(
                 setBody("{}")
             }.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.NoContent)
+                assertThat(response.headers["X-Test-Header"]).isEqualTo("Er-Satt")
             }
         }
     }
