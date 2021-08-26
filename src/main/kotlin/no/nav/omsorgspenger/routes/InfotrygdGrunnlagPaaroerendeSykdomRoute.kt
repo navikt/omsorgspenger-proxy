@@ -3,9 +3,9 @@ package no.nav.omsorgspenger.routes
 import io.ktor.application.*
 import io.ktor.request.*
 import io.ktor.routing.*
-import no.nav.omsorgspenger.OkHttp.doGet
-import no.nav.omsorgspenger.OkHttp.forward
-import no.nav.omsorgspenger.OkHttp.forwardGet
+import no.nav.omsorgspenger.KtorHttp.doGet
+import no.nav.omsorgspenger.KtorHttp.forward
+import no.nav.omsorgspenger.KtorHttp.forwardGet
 import no.nav.omsorgspenger.config.Config
 
 private const val Path = "/infotrygd-grunnlag-paaroerende-sykdom"

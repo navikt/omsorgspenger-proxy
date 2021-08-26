@@ -2,6 +2,7 @@ package no.nav.omsorgspenger
 
 import io.ktor.application.*
 import io.ktor.client.call.*
+import io.ktor.client.engine.java.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -9,6 +10,7 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.response.*
+import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpDelete
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpGet
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpOptions
@@ -17,13 +19,14 @@ import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpPost
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpPut
 import org.slf4j.LoggerFactory
 
-internal object OkHttp {
+internal object KtorHttp {
 
-    private val logger = LoggerFactory.getLogger(OkHttp::class.java)
+    private val config = SimpleHttpClient.Config(engine = Java)
+    private val logger = LoggerFactory.getLogger(KtorHttp::class.java)
 
     internal suspend fun ApplicationCall.forwardPatch(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) {
         receiveOrNull<ByteArray>().also { body -> forward {
-            toUrl.httpPatch(true) { builder ->
+            toUrl.httpPatch(config) { builder ->
                 populateBuilder(
                     builder = builder,
                     extraHeaders = extraHeaders,
@@ -34,7 +37,7 @@ internal object OkHttp {
     }
     internal suspend fun ApplicationCall.forwardPost(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) {
         receiveOrNull<ByteArray>().also { body -> forward {
-            toUrl.httpPost(true) { builder ->
+            toUrl.httpPost(config) { builder ->
                 populateBuilder(
                     builder = builder,
                     extraHeaders = extraHeaders,
@@ -45,7 +48,7 @@ internal object OkHttp {
     }
     internal suspend fun ApplicationCall.forwardPut(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) {
         receiveOrNull<ByteArray>().also { body -> forward {
-            toUrl.httpPut(true) { builder ->
+            toUrl.httpPut(config) { builder ->
                 populateBuilder(
                     builder = builder,
                     extraHeaders = extraHeaders,
@@ -56,7 +59,7 @@ internal object OkHttp {
     }
     internal suspend fun ApplicationCall.forwardDelete(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) {
         receiveOrNull<ByteArray>().also { body -> forward {
-            toUrl.httpDelete(true) { builder ->
+            toUrl.httpDelete(config) { builder ->
                 populateBuilder(
                     builder = builder,
                     extraHeaders = extraHeaders,
@@ -67,7 +70,7 @@ internal object OkHttp {
     }
     internal suspend fun ApplicationCall.forwardOptions(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) {
         forward {
-            toUrl.httpOptions(true) { builder ->
+            toUrl.httpOptions(config) { builder ->
                 populateBuilder(
                     builder = builder,
                     extraHeaders = extraHeaders,
@@ -78,7 +81,7 @@ internal object OkHttp {
     }
 
     internal suspend fun ApplicationCall.doGet(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) =
-        toUrl.httpGet(true) { builder ->
+        toUrl.httpGet(config) { builder ->
             populateBuilder(
                 builder = builder,
                 extraHeaders = extraHeaders,
@@ -159,6 +162,7 @@ internal object OkHttp {
 
         // Query parameters
         request.queryParameters.forEach { key, values ->
+            logger.info("Query parameters: $key har ${values.size} verdier.")
             values.forEach { value ->
                 builder.parameter(key, value)
             }
