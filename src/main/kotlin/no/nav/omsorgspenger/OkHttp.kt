@@ -23,7 +23,7 @@ internal object OkHttp {
 
     internal suspend fun ApplicationCall.forwardPatch(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) {
         receiveOrNull<ByteArray>().also { body -> forward {
-            toUrl.httpPatch { builder ->
+            toUrl.httpPatch(true) { builder ->
                 populateBuilder(
                     builder = builder,
                     extraHeaders = extraHeaders,
@@ -34,7 +34,7 @@ internal object OkHttp {
     }
     internal suspend fun ApplicationCall.forwardPost(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) {
         receiveOrNull<ByteArray>().also { body -> forward {
-            toUrl.httpPost { builder ->
+            toUrl.httpPost(true) { builder ->
                 populateBuilder(
                     builder = builder,
                     extraHeaders = extraHeaders,
@@ -45,7 +45,7 @@ internal object OkHttp {
     }
     internal suspend fun ApplicationCall.forwardPut(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) {
         receiveOrNull<ByteArray>().also { body -> forward {
-            toUrl.httpPut { builder ->
+            toUrl.httpPut(true) { builder ->
                 populateBuilder(
                     builder = builder,
                     extraHeaders = extraHeaders,
@@ -56,7 +56,7 @@ internal object OkHttp {
     }
     internal suspend fun ApplicationCall.forwardDelete(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) {
         receiveOrNull<ByteArray>().also { body -> forward {
-            toUrl.httpDelete { builder ->
+            toUrl.httpDelete(true) { builder ->
                 populateBuilder(
                     builder = builder,
                     extraHeaders = extraHeaders,
@@ -67,7 +67,7 @@ internal object OkHttp {
     }
     internal suspend fun ApplicationCall.forwardOptions(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) {
         forward {
-            toUrl.httpOptions { builder ->
+            toUrl.httpOptions(true) { builder ->
                 populateBuilder(
                     builder = builder,
                     extraHeaders = extraHeaders,
@@ -78,7 +78,7 @@ internal object OkHttp {
     }
 
     internal suspend fun ApplicationCall.doGet(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) =
-        toUrl.httpGet { builder ->
+        toUrl.httpGet(true) { builder ->
             populateBuilder(
                 builder = builder,
                 extraHeaders = extraHeaders,
@@ -158,8 +158,10 @@ internal object OkHttp {
         }
 
         // Query parameters
-        request.queryParameters.forEach { key, value ->
-            builder.parameter(key, value)
+        request.queryParameters.forEach { key, values ->
+            values.forEach { value ->
+                builder.parameter(key, value)
+            }
         }
 
         // Headers
