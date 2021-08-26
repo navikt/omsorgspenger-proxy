@@ -164,7 +164,7 @@ internal object KtorHttp {
         request.queryParameters.forEach { key, values ->
             logger.info("Query parameters: $key har ${values.size} verdier.")
             values.forEach { value ->
-                builder.parameter(key, value)
+                //builder.parameter(key, value)
             }
         }
 
@@ -176,6 +176,10 @@ internal object KtorHttp {
         }
         extra.forEach { (key, value) ->
             builder.header(key, value)
+        }
+
+        if (request.header(HttpHeaders.Accept) == null && !extra.containsKey(HttpHeaders.Accept)) {
+            builder.header(HttpHeaders.Accept, "*/*")
         }
     }
 }
