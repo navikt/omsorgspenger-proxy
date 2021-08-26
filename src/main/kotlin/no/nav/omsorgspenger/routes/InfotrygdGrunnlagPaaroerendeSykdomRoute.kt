@@ -7,8 +7,10 @@ import no.nav.omsorgspenger.KtorHttp.doGet
 import no.nav.omsorgspenger.KtorHttp.forward
 import no.nav.omsorgspenger.KtorHttp.forwardGet
 import no.nav.omsorgspenger.config.Config
+import org.slf4j.LoggerFactory
 
 private const val Path = "/infotrygd-grunnlag-paaroerende-sykdom"
+private val logger = LoggerFactory.getLogger("no.nav.InfotrygdGrunnlagPaaroerendeSykdomRoute")
 
 internal fun Route.InfotrygdGrunnlagPaaroerendeSykdomRoute(
     config: Config.InfotrygdGrunnlagPaaroerendeSykdom) {
@@ -27,7 +29,10 @@ internal fun Route.InfotrygdGrunnlagPaaroerendeSykdomRoute(
                 call.doGet(call.toK9InfotygdUrl())
             }
             if (!success) {
+                logger.warn("Oppslag mot k9-infotrygd feilet. Fallbacker til infotrygd-grunnlag-paaroerende-sykdom")
                 call.forwardGet(call.toUrl(), emptyMap())
+            } else {
+                logger.info("Oppslag mot k9-infotrygd gikk bra!")
             }
         }
     }
