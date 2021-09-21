@@ -43,8 +43,6 @@ internal object Config {
 
     internal class InfotrygdGrunnlagPaaroerendeSykdom(env: Map<String, String>) {
         internal val url = env.getOrFail("INFOTRYGD_GRUNNLAG_PAAROERENDE_SYKDOM_BASE_URL")
-        internal val k9InfotrygdUrl = env.getOrFail("K9_INFOTRYGD_BASE_URL")
-        internal val sammeUrl = url == k9InfotrygdUrl
     }
 
     internal class OpenAM(env: Map<String, String>) {

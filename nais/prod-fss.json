@@ -17,8 +17,7 @@
     "OPEN_AM_WELL_KNOWN_URL": "https://isso.adeo.no/isso/oauth2/.well-known/openid-configuration",
     "K9_SAK_BASE_URL": "https://k9-sak.nais.adeo.no/k9/sak",
     "SAK_BASE_URL": "https://sak.nais.adeo.no",
-    "INFOTRYGD_GRUNNLAG_PAAROERENDE_SYKDOM_BASE_URL": "https://infotrygd-grunnlag-paaroerende-sykdom.nais.adeo.no",
-    "K9_INFOTRYGD_BASE_URL": "https://k9-infotrygd.intern.nav.no",
+    "INFOTRYGD_GRUNNLAG_PAAROERENDE_SYKDOM_BASE_URL": "https://k9-infotrygd.intern.nav.no",
     "SAF_BASE_URL": "https://saf.nais.adeo.no",
     "LDAP_URL": "ldaps://ldapgw.adeo.no",
     "LDAP_SEARCH_BASE": "ou=NAV,ou=BusinessUnits,dc=adeo,dc=no"
