@@ -49,6 +49,7 @@ internal fun Application.app(applicationContext: ApplicationContext = Applicatio
 
     install(CallLogging) {
         correlationIdAndRequestIdInMdc()
+        logRequests() // Fikser fancy color logging som printar ansi koder i log output.
     }
 
     val issuers = applicationContext.env.omsorgspengerProxyIssuers()
