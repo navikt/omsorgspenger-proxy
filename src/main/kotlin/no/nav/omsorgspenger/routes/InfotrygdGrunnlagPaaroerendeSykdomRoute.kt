@@ -4,6 +4,7 @@ import io.ktor.application.*
 import io.ktor.request.*
 import io.ktor.routing.*
 import no.nav.omsorgspenger.KtorHttp.forwardGet
+import no.nav.omsorgspenger.KtorHttp.forwardPost
 import no.nav.omsorgspenger.config.Config
 
 private const val Path = "/infotrygd-grunnlag-paaroerende-sykdom"
@@ -16,5 +17,9 @@ internal fun Route.InfotrygdGrunnlagPaaroerendeSykdomRoute(
 
     get("$Path{...}") {
         call.forwardGet(call.toUrl())
+    }
+
+    post("$Path{...}") {
+        call.forwardPost(call.toUrl())
     }
 }
