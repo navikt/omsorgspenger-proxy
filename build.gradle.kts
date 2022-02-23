@@ -2,18 +2,18 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val junitJupiterVersion = "5.8.2"
-val dusseldorfVersion = "3.1.6.5-50b2e34"
-val ktorVersion = "1.6.6"
+val dusseldorfVersion = "3.1.6.7-f2a96e8"
+val ktorVersion = "1.6.7"
 val fuelVersion = "2.3.1"
 
 val jsonassertVersion = "1.5.0"
-val assertjVersion = "3.21.0"
+val assertjVersion = "3.22.0"
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.6.0"
-    id("com.github.johnrengelman.shadow") version "7.1.0"
+    kotlin("jvm") version "1.6.10"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 java {
@@ -50,7 +50,7 @@ repositories {
         name = "GitHubPackages"
         url = uri("https://maven.pkg.github.com/navikt/k9-rapid")
         credentials {
-            username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USERNAME")
+            username = project.findProperty("gpr.user") as String? ?: "x-access-token"
             password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
         }
     }
@@ -89,6 +89,6 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "7.3.1"
+        gradleVersion = "7.4"
     }
 }
