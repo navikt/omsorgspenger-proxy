@@ -38,9 +38,6 @@ spec:
         - application: k9-punsjbolle
           namespace: omsorgspenger
           cluster: {{clusterGcp}}
-        - application: sif-inntektsmelding-api
-          namespace: team-sifinntektsmelding
-          cluster: {{clusterGcp}}
   resources:
     limits:
       cpu: 500m
