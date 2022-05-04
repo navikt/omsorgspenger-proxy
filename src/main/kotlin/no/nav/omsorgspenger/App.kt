@@ -23,7 +23,6 @@ import no.nav.omsorgspenger.routes.*
 import no.nav.omsorgspenger.routes.ActiveDirectoryRoute
 import no.nav.omsorgspenger.routes.DokarkivproxyRoute
 import no.nav.omsorgspenger.routes.OppgaveRoute
-import no.nav.omsorgspenger.routes.PdlRoute
 import no.nav.omsorgspenger.sts.StsRestClient
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
@@ -89,11 +88,6 @@ internal fun Application.app(applicationContext: ApplicationContext = Applicatio
         }
         authenticate(*issuers.azureProxyScoped()) {
             // Underliggende tjenester støtter ikke Azure-tokens, veksler til tokens de støtter.
-            PdlRoute(
-                pdlConfig = Config.PDL(applicationContext.env),
-                stsClient = stsClient,
-                openAm = openAm
-            )
             OppgaveRoute(
                 oppgaveConfig = Config.Oppgave(applicationContext.env),
                 stsClient = stsClient

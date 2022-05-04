@@ -10,7 +10,6 @@
   ],
   "env": {
     "STS_TOKEN_URL": "https://security-token-service.nais.adeo.no/rest/v1/sts/token",
-    "PDL_BASE_URL": "https://pdl-api.nais.adeo.no",
     "OPPGAVE_BASE_URL": "https://oppgave.nais.adeo.no",
     "DOKARKIV_PROXY_BASE_URL": "https://dokarkivproxy.nais.adeo.no",
     "OPEN_AM_WELL_KNOWN_URL": "https://isso.adeo.no/isso/oauth2/.well-known/openid-configuration",
