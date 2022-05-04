@@ -9,10 +9,6 @@ internal object Config {
         internal val password = env.getOrFail("password")
     }
 
-    internal class AAREG(env: Map<String, String>) {
-        internal val url = env.getOrFail("AAREG_BASE_URL")
-    }
-
     internal class PDL(env: Map<String, String>) {
         internal val url = env.getOrFail("PDL_BASE_URL")
     }
@@ -27,10 +23,6 @@ internal object Config {
 
     internal class K9Sak(env: Map<String, String>) {
         internal val url = env.getOrFail("K9_SAK_BASE_URL")
-    }
-
-    internal class Sak(env: Map<String, String>) {
-        internal val url = env.getOrFail("SAK_BASE_URL")
     }
 
     internal class STS(env: Map<String, String>) {

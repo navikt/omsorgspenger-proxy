@@ -24,7 +24,6 @@ import no.nav.omsorgspenger.routes.ActiveDirectoryRoute
 import no.nav.omsorgspenger.routes.DokarkivproxyRoute
 import no.nav.omsorgspenger.routes.OppgaveRoute
 import no.nav.omsorgspenger.routes.PdlRoute
-import no.nav.omsorgspenger.routes.AaregRoute
 import no.nav.omsorgspenger.sts.StsRestClient
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
@@ -95,10 +94,6 @@ internal fun Application.app(applicationContext: ApplicationContext = Applicatio
                 stsClient = stsClient,
                 openAm = openAm
             )
-            AaregRoute(
-                aaregConfig = Config.AAREG(applicationContext.env),
-                stsClient = stsClient
-            )
             OppgaveRoute(
                 oppgaveConfig = Config.Oppgave(applicationContext.env),
                 stsClient = stsClient
@@ -119,10 +114,6 @@ internal fun Application.app(applicationContext: ApplicationContext = Applicatio
             )
             SafRoute(
                 config = Config.SAF(applicationContext.env),
-                stsClient = stsClient
-            )
-            SakRoute(
-                config = Config.Sak(applicationContext.env),
                 stsClient = stsClient
             )
         }
