@@ -13,7 +13,7 @@ private const val dokarkivproxyPath = "/dokarkivproxy-mock"
 
 private fun MappingBuilder.dokarkivproxyMapping() = this
     .withHeader(HttpHeaders.Authorization, containing("Bearer "))
-    .withHeader(ProxiedHeader, AnythingPattern())
+    .withHeader("ProxiedHeader", AnythingPattern())
     .willReturn(
         aResponse()
             .withBody("{}")

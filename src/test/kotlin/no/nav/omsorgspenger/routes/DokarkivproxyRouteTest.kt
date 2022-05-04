@@ -8,7 +8,6 @@ import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import no.nav.omsorgspenger.testutils.AuthorizationHeaders.medAzure
 import no.nav.omsorgspenger.testutils.TestApplicationExtension
-import no.nav.omsorgspenger.testutils.mocks.ProxiedHeader
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -34,7 +33,7 @@ internal class DokarkivproxyRouteTest(
             handleRequest(HttpMethod.Put, dokarkivproxyUrl) {
                 medAzure()
                 addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(ProxiedHeader, "anything")
+                addHeader("ProxiedHeader", "anything")
                 setBody("{}")
             }.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
@@ -49,7 +48,7 @@ internal class DokarkivproxyRouteTest(
             handleRequest(HttpMethod.Put, dokarkivproxyUrl) {
                 medAzure(audience = "ikke-oms-proxy")
                 addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(ProxiedHeader, "anything")
+                addHeader("ProxiedHeader", "anything")
             }.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.Forbidden)
             }
@@ -62,7 +61,7 @@ internal class DokarkivproxyRouteTest(
             handleRequest(HttpMethod.Put, dokarkivproxyUrl) {
                 medAzure(clientId = "not-allowed")
                 addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(ProxiedHeader, "anything")
+                addHeader("ProxiedHeader", "anything")
             }.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.Forbidden)
             }

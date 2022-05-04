@@ -8,7 +8,6 @@ import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import no.nav.omsorgspenger.testutils.AuthorizationHeaders.medAzure
 import no.nav.omsorgspenger.testutils.TestApplicationExtension
-import no.nav.omsorgspenger.testutils.mocks.ProxiedHeader
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -34,7 +33,7 @@ internal class OppgaveRouteTest(
             handleRequest(HttpMethod.Get, oppgaveUrl) {
                 medAzure(clientId = "allowed-1")
                 addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(ProxiedHeader, "anything")
+                addHeader("ProxiedHeader", "anything")
             }.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
                 assertThat(response.headers[HttpHeaders.ContentType]).isEqualTo("application/json")
@@ -48,7 +47,7 @@ internal class OppgaveRouteTest(
             handleRequest(HttpMethod.Post, oppgaveUrl) {
                 medAzure(clientId = "allowed-2")
                 addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(ProxiedHeader, "anything")
+                addHeader("ProxiedHeader", "anything")
                 setBody("{}")
             }.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
@@ -63,7 +62,7 @@ internal class OppgaveRouteTest(
             handleRequest(HttpMethod.Patch, "/oppgave/patch-request") {
                 medAzure(clientId = "allowed-2")
                 addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(ProxiedHeader, "anything")
+                addHeader("ProxiedHeader", "anything")
                 setBody("{}")
             }.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.NoContent)
@@ -78,7 +77,7 @@ internal class OppgaveRouteTest(
             handleRequest(HttpMethod.Get, oppgaveUrl) {
                 medAzure(audience = "ikke-oms-proxy")
                 addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(ProxiedHeader, "anything")
+                addHeader("ProxiedHeader", "anything")
             }.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.Forbidden)
             }
@@ -91,7 +90,7 @@ internal class OppgaveRouteTest(
             handleRequest(HttpMethod.Get, oppgaveUrl) {
                 medAzure(clientId = "not-allowed")
                 addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(ProxiedHeader, "anything")
+                addHeader("ProxiedHeader", "anything")
             }.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.Forbidden)
             }

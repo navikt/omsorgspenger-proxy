@@ -14,7 +14,7 @@ private const val oppgaveUrlPath = "/oppgave-mock"
 
 private fun MappingBuilder.oppgaveMapping() = this
     .withHeader(HttpHeaders.Authorization, containing("Bearer "))
-    .withHeader(ProxiedHeader, AnythingPattern())
+    .withHeader("ProxiedHeader", AnythingPattern())
     .withQueryParam("testparam", AnythingPattern())
     .willReturn(
         aResponse()

@@ -14,7 +14,6 @@ import no.nav.omsorgspenger.testutils.mocks.*
 import no.nav.omsorgspenger.testutils.mocks.MockedLdapGateway
 import no.nav.omsorgspenger.testutils.mocks.dokarkivproxyUrl
 import no.nav.omsorgspenger.testutils.mocks.oppgaveUrl
-import no.nav.omsorgspenger.testutils.mocks.pdlUrl
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
@@ -28,7 +27,6 @@ internal class TestApplicationExtension : ParameterResolver {
             env = mapOf(
                 "username" to "test_username",
                 "password" to "test_pw",
-                "PDL_BASE_URL" to mockedEnvironment.wireMockServer.pdlUrl(),
                 "OPPGAVE_BASE_URL" to mockedEnvironment.wireMockServer.oppgaveUrl(),
                 "STS_TOKEN_URL" to mockedEnvironment.wireMockServer.getNaisStsTokenUrl(),
                 "DOKARKIV_PROXY_BASE_URL" to mockedEnvironment.wireMockServer.dokarkivproxyUrl(),
@@ -36,6 +34,7 @@ internal class TestApplicationExtension : ParameterResolver {
                 "AZURE_APP_CLIENT_ID" to "omsorgspenger-proxy",
                 "AZURE_APP_PRE_AUTHORIZED_APPS" to """[{"clientId":"allowed-1"},{"clientId":"allowed-2"}]""",
                 "K9_SAK_BASE_URL" to mockedEnvironment.wireMockServer.k9SakUrl(),
+                "SAK_BASE_URL" to mockedEnvironment.wireMockServer.sakUrl(),
                 "INFOTRYGD_GRUNNLAG_PAAROERENDE_SYKDOM_BASE_URL" to mockedEnvironment.wireMockServer.infotrygdGrunnlagPaaroerendeSykdomUrl(),
                 "K9_INFOTRYGD_BASE_URL" to mockedEnvironment.wireMockServer.infotrygdGrunnlagPaaroerendeSykdomUrl(),
                 "SAF_BASE_URL" to mockedEnvironment.wireMockServer.safUrl(),
