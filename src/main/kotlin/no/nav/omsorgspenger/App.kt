@@ -88,6 +88,11 @@ internal fun Application.app(applicationContext: ApplicationContext = Applicatio
         }
         authenticate(*issuers.azureProxyScoped()) {
             // Underliggende tjenester støtter ikke Azure-tokens, veksler til tokens de støtter.
+            PdlRoute(
+                pdlConfig = Config.PDL(applicationContext.env),
+                stsClient = stsClient,
+                openAm = openAm
+            )
             OppgaveRoute(
                 oppgaveConfig = Config.Oppgave(applicationContext.env),
                 stsClient = stsClient

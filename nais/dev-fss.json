@@ -10,6 +10,7 @@
   ],
   "env": {
     "STS_TOKEN_URL": "https://security-token-service.nais.preprod.local/rest/v1/sts/token",
+    "PDL_BASE_URL": "https://pdl-api.nais.preprod.local",
     "OPPGAVE_BASE_URL": "https://oppgave.nais.preprod.local",
     "DOKARKIV_PROXY_BASE_URL": "https://dokarkivproxy-q1.nais.preprod.local",
     "OPEN_AM_WELL_KNOWN_URL": "https://isso-q.adeo.no/isso/oauth2/.well-known/openid-configuration",

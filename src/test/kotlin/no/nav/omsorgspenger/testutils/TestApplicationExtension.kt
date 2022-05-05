@@ -27,6 +27,7 @@ internal class TestApplicationExtension : ParameterResolver {
             env = mapOf(
                 "username" to "test_username",
                 "password" to "test_pw",
+                "PDL_BASE_URL" to mockedEnvironment.wireMockServer.pdlUrl(),
                 "OPPGAVE_BASE_URL" to mockedEnvironment.wireMockServer.oppgaveUrl(),
                 "STS_TOKEN_URL" to mockedEnvironment.wireMockServer.getNaisStsTokenUrl(),
                 "DOKARKIV_PROXY_BASE_URL" to mockedEnvironment.wireMockServer.dokarkivproxyUrl(),
