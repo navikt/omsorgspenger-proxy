@@ -9,7 +9,12 @@ import io.ktor.jackson.jackson
 import io.ktor.routing.Routing
 import no.nav.helse.dusseldorf.ktor.auth.AuthStatusPages
 import no.nav.helse.dusseldorf.ktor.auth.multipleJwtIssuers
-import no.nav.helse.dusseldorf.ktor.core.*
+import no.nav.helse.dusseldorf.ktor.core.DefaultProbeRoutes
+import no.nav.helse.dusseldorf.ktor.core.DefaultStatusPages
+import no.nav.helse.dusseldorf.ktor.core.correlationIdAndRequestIdInMdc
+import no.nav.helse.dusseldorf.ktor.core.fromFirstNonNullHeader
+import no.nav.helse.dusseldorf.ktor.core.id
+import no.nav.helse.dusseldorf.ktor.core.logRequests
 import no.nav.helse.dusseldorf.ktor.health.HealthReporter
 import no.nav.helse.dusseldorf.ktor.health.HealthRoute
 import no.nav.helse.dusseldorf.ktor.health.HealthService
@@ -19,10 +24,15 @@ import no.nav.omsorgspenger.Auth.azureProxyScoped
 import no.nav.omsorgspenger.Auth.omsorgspengerProxyIssuers
 import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.ldap.LdapService
-import no.nav.omsorgspenger.routes.*
 import no.nav.omsorgspenger.routes.ActiveDirectoryRoute
 import no.nav.omsorgspenger.routes.DokarkivproxyRoute
+import no.nav.omsorgspenger.routes.InfotrygdGrunnlagPaaroerendeSykdomRoute
+import no.nav.omsorgspenger.routes.K9SakRoute
+import no.nav.omsorgspenger.routes.OpenAmPublicRoute
 import no.nav.omsorgspenger.routes.OppgaveRoute
+import no.nav.omsorgspenger.routes.PdlRoute
+import no.nav.omsorgspenger.routes.SafRoute
+import no.nav.omsorgspenger.routes.SakRoute
 import no.nav.omsorgspenger.sts.StsRestClient
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
