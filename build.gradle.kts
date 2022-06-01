@@ -7,7 +7,7 @@ val ktorVersion = "1.6.8"
 val fuelVersion = "2.3.1"
 
 val jsonassertVersion = "1.5.0"
-val assertjVersion = "3.22.0"
+val assertjVersion = "3.23.1"
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
