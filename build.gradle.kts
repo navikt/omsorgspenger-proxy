@@ -6,7 +6,7 @@ val dusseldorfVersion = "3.1.6.8-1a4651d"
 val ktorVersion = "1.6.8"
 val fuelVersion = "2.3.1"
 
-val jsonassertVersion = "1.5.0"
+val jsonassertVersion = "1.5.1"
 val assertjVersion = "3.22.0"
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
