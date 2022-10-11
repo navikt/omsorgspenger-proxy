@@ -33,7 +33,7 @@ import no.nav.omsorgspenger.sts.StsRestClient
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 internal fun Application.app(
-    applicationContext: ApplicationContext
+    applicationContext: ApplicationContext = ApplicationContext.Builder().build()
 ) {
     install(ContentNegotiation) {
         jackson()
