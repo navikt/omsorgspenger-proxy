@@ -8,14 +8,15 @@ import no.nav.helse.dusseldorf.testsupport.jws.NaisSts
 internal object AuthorizationHeaders {
     internal fun HttpRequestBuilder.medOpenAm(navIdent: String = "person1") {
         header(
-            "X-Open-AM", "Bearer ${
-                NaisSts.generateJwt(
-                    application = "foo",
-                    overridingClaims = mapOf(
-                        "sub" to navIdent,
-                        "tokenName" to "id_token"
-                    )
+            "X-Open-AM",
+            "Bearer ${
+            NaisSts.generateJwt(
+                application = "foo",
+                overridingClaims = mapOf(
+                    "sub" to navIdent,
+                    "tokenName" to "id_token"
                 )
+            )
             }"
         )
     }
@@ -25,11 +26,12 @@ internal object AuthorizationHeaders {
         clientId: String = "allowed-1"
     ) {
         header(
-            HttpHeaders.Authorization, "Bearer ${
-                Azure.V2_0.generateJwt(
-                    clientId = clientId,
-                    audience = audience
-                )
+            HttpHeaders.Authorization,
+            "Bearer ${
+            Azure.V2_0.generateJwt(
+                clientId = clientId,
+                audience = audience
+            )
             }"
         )
     }

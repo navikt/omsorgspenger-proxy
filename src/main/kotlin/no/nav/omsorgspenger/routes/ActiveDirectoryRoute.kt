@@ -1,7 +1,7 @@
 package no.nav.omsorgspenger.routes
 
-import io.ktor.server.application.*
 import io.ktor.http.*
+import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import no.nav.omsorgspenger.OpenAm
@@ -18,7 +18,6 @@ internal fun Route.ActiveDirectoryRoute(
     openAm: OpenAm,
     ldapService: LdapService
 ) {
-
     get("/active-directory/me/memberOf") {
         val userInfo = openAm.verifisertUserInfo(call)
         val grupper = ldapService.hentGrupper(userInfo.navIdent).map {

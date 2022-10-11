@@ -21,7 +21,6 @@ import no.nav.omsorgspenger.testutils.mocks.sakUrl
 internal fun TestApplicationBuilder.mockApp(
     mockedEnvironment: MockedEnvironment = MockedEnvironment().start()
 ) {
-
     val applicationContext = ApplicationContext.Builder(
         ldapGateway = MockedLdapGateway(),
         env = mapOf(
@@ -40,7 +39,7 @@ internal fun TestApplicationBuilder.mockApp(
             "K9_INFOTRYGD_BASE_URL" to mockedEnvironment.wireMockServer.infotrygdGrunnlagPaaroerendeSykdomUrl(),
             "SAF_BASE_URL" to mockedEnvironment.wireMockServer.safUrl(),
             "OPEN_AM_WELL_KNOWN_URL" to mockedEnvironment.wireMockServer.getNaisStsWellKnownUrl(),
-            "AAREG_BASE_URL" to mockedEnvironment.wireMockServer.aaregUrl(),
+            "AAREG_BASE_URL" to mockedEnvironment.wireMockServer.aaregUrl()
         )
     )
 

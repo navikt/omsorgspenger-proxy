@@ -34,7 +34,6 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     testImplementation("no.nav.helse:dusseldorf-test-support:$dusseldorfVersion")
     testImplementation("org.skyscreamer:jsonassert:$jsonassertVersion")
-
 }
 
 repositories {
@@ -60,7 +59,6 @@ tasks {
     named<KotlinCompile>("compileTestKotlin") {
         kotlinOptions.jvmTarget = "17"
     }
-
 
     withType<Test> {
         useJUnitPlatform()

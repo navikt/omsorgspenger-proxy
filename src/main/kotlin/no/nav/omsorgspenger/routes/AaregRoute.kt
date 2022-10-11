@@ -1,7 +1,7 @@
 package no.nav.omsorgspenger.routes
 
-import io.ktor.server.application.call
 import io.ktor.http.HttpHeaders
+import io.ktor.server.application.call
 import io.ktor.server.request.uri
 import io.ktor.server.routing.*
 import no.nav.omsorgspenger.KtorHttp.forwardGet

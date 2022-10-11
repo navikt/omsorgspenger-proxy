@@ -1,7 +1,7 @@
 package no.nav.omsorgspenger.routes
 
-import io.ktor.server.application.*
 import io.ktor.http.*
+import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import no.nav.omsorgspenger.KtorHttp.forwardGet
@@ -17,7 +17,6 @@ internal fun Route.SafRoute(
     config: Config.SAF,
     stsClient: StsRestClient
 ) {
-
     fun ApplicationCall.toUrl() =
         "${config.url}${request.uri.removePrefix(Path)}"
 
@@ -29,7 +28,6 @@ internal fun Route.SafRoute(
         }
 
     val utenAuthorizationHeader = mapOf(HttpHeaders.Authorization to null)
-
 
     route(Path) {
         post("/graphql") {

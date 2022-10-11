@@ -80,7 +80,7 @@ internal class ActiveDirectoryRouteTest {
                     "displayName": "gruppe2"
                   }]
                 }
-                """.trimIndent()
+            """.trimIndent()
             JSONAssert.assertEquals(forventet, this.bodyAsText(), true)
         }
     }
@@ -101,7 +101,7 @@ internal class ActiveDirectoryRouteTest {
                     "displayName": "gruppe1"
                   }]
                 }
-                """.trimIndent()
+            """.trimIndent()
             JSONAssert.assertEquals(forventet, this.bodyAsText(), true)
         }
     }
@@ -119,7 +119,7 @@ internal class ActiveDirectoryRouteTest {
                 {
                   "value": []
                 }
-                """.trimIndent()
+            """.trimIndent()
             JSONAssert.assertEquals(forventet, this.bodyAsText(), true)
         }
     }

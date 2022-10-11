@@ -12,7 +12,6 @@ private const val Path = "/infotrygd-grunnlag-paaroerende-sykdom"
 internal fun Route.InfotrygdGrunnlagPaaroerendeSykdomRoute(
     config: Config.InfotrygdGrunnlagPaaroerendeSykdom
 ) {
-
     fun ApplicationCall.toUrl() =
         "${config.url}${request.uri.removePrefix(Path)}"
 

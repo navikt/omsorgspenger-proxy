@@ -1,7 +1,7 @@
 package no.nav.omsorgspenger.routes
 
-import io.ktor.server.application.*
 import io.ktor.http.*
+import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import no.nav.omsorgspenger.KtorHttp.forwardGet
@@ -17,7 +17,6 @@ internal fun Route.SakRoute(
     config: Config.Sak,
     stsClient: StsRestClient
 ) {
-
     fun ApplicationCall.toUrl() =
         "${config.url}${request.uri.removePrefix(Path)}"
 

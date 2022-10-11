@@ -54,7 +54,6 @@ private fun WireMockServer.stubOppgavePatch(): WireMockServer {
     return this
 }
 
-
 internal fun WireMockServer.oppgaveUrl(): String = baseUrl() + oppgaveUrlPath
 
 internal fun WireMockServer.stubOppgave() = this

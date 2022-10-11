@@ -11,7 +11,7 @@ import java.net.URI
 
 internal class StsRestClient(
     stsConfig: Config.STS,
-    serviceUserConfig: Config.ServiceUser,
+    serviceUserConfig: Config.ServiceUser
 ) : HealthCheck {
 
     private val cachedAccessTokenClient: CachedAccessTokenClient = CachedAccessTokenClient(

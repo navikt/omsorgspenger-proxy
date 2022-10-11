@@ -12,19 +12,22 @@ import javax.naming.ldap.InitialLdapContext
 import javax.naming.ldap.LdapContext
 
 internal interface LdapGateway {
-    fun hentGrupper(navIdent: String) : Set<String>
+    fun hentGrupper(navIdent: String): Set<String>
 }
 
 internal class DefaultLdapGateway(
-    ldapConfig: Config.Ldap) : LdapGateway {
+    ldapConfig: Config.Ldap
+) : LdapGateway {
 
-    private val ldapEnvironment = Hashtable(mapOf(
-        Context.INITIAL_CONTEXT_FACTORY to "com.sun.jndi.ldap.LdapCtxFactory",
-        Context.PROVIDER_URL to ldapConfig.url,
-        Context.SECURITY_AUTHENTICATION to "simple",
-        Context.SECURITY_PRINCIPAL to ldapConfig.username,
-        Context.SECURITY_CREDENTIALS to ldapConfig.password
-    ))
+    private val ldapEnvironment = Hashtable(
+        mapOf(
+            Context.INITIAL_CONTEXT_FACTORY to "com.sun.jndi.ldap.LdapCtxFactory",
+            Context.PROVIDER_URL to ldapConfig.url,
+            Context.SECURITY_AUTHENTICATION to "simple",
+            Context.SECURITY_PRINCIPAL to ldapConfig.username,
+            Context.SECURITY_CREDENTIALS to ldapConfig.password
+        )
+    )
 
     private val searchBase = ldapConfig.searchBase
 
@@ -32,9 +35,9 @@ internal class DefaultLdapGateway(
         it.searchScope = SearchControls.SUBTREE_SCOPE
     }
 
-    private fun search(navIdent: String) = ldapContext().search(searchBase,"(cn=$navIdent)", searchControls).searchResult()
+    private fun search(navIdent: String) = ldapContext().search(searchBase, "(cn=$navIdent)", searchControls).searchResult()
 
-    override fun hentGrupper(navIdent: String) : Set<String> {
+    override fun hentGrupper(navIdent: String): Set<String> {
         val searchResult = search(navIdent) ?: return emptySet()
         val memberOf = searchResult.attribute(MemberOf) ?: return emptySet()
         return memberOf.gruppeResolver()
@@ -44,13 +47,13 @@ internal class DefaultLdapGateway(
 
     internal companion object {
         private const val MemberOf = "memberOf"
-        private fun NamingEnumeration<SearchResult>.searchResult() : SearchResult? {
+        private fun NamingEnumeration<SearchResult>.searchResult(): SearchResult? {
             return if (!hasMoreElements()) {
                 logger.warn("Ingen SearchResult")
                 null
             } else { nextElement() }
         }
-        private fun SearchResult.attribute(key: String) : Attribute? = attributes[key].also { attribute ->
+        private fun SearchResult.attribute(key: String): Attribute? = attributes[key].also { attribute ->
             if (attribute == null) {
                 logger.warn("Inneholder ikke Attribute[$key]")
             }

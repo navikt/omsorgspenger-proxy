@@ -1,6 +1,5 @@
 package no.nav.omsorgspenger
 
-import io.ktor.server.application.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.java.*
 import io.ktor.client.plugins.*
@@ -8,6 +7,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.http.content.*
+import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.util.*
@@ -124,10 +124,10 @@ internal object KtorHttp {
                     val queryNames = httpRequestData.url.parameters.names()
                     val urlUtenQueryParameters = "${httpRequestData.url}".substringBefore("?")
                     logger.error(
-                        "Uventet response gjennom proxy: Method=[${httpRequestData.method.value}], Url=[${urlUtenQueryParameters}], QueryNames=$queryNames, Accept=[${httpRequestData.headers[HttpHeaders.Accept]}], HttpStatusCode=[${it.status.value}], Response=[${
-                            String(
-                                responseBody
-                            )
+                        "Uventet response gjennom proxy: Method=[${httpRequestData.method.value}], Url=[$urlUtenQueryParameters], QueryNames=$queryNames, Accept=[${httpRequestData.headers[HttpHeaders.Accept]}], HttpStatusCode=[${it.status.value}], Response=[${
+                        String(
+                            responseBody
+                        )
                         }]"
                     )
                 }
@@ -171,7 +171,6 @@ internal object KtorHttp {
         body: ByteArray?,
         extraHeaders: Map<String, Any?>
     ) {
-
         // Body
         body?.also {
             builder.body = ByteArrayContent(

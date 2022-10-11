@@ -1,7 +1,7 @@
 package no.nav.omsorgspenger.routes
 
-import io.ktor.server.application.*
 import io.ktor.http.*
+import io.ktor.server.application.*
 import io.ktor.server.request.uri
 import io.ktor.server.response.*
 import io.ktor.server.routing.Route
@@ -24,9 +24,7 @@ internal fun Route.PdlRoute(
     stsClient: StsRestClient,
     openAm: OpenAm
 ) {
-
     route("/pdl{...}") {
-
         post {
             val pdlUrl = pdlConfig.url
             val path = call.request.uri.removePrefix("/pdl")
