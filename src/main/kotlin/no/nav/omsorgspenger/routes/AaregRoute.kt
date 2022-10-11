@@ -1,11 +1,11 @@
 package no.nav.omsorgspenger.routes
 
-import io.ktor.application.call
+import io.ktor.server.application.call
 import io.ktor.http.HttpHeaders
-import io.ktor.request.uri
-import io.ktor.routing.*
+import io.ktor.server.request.uri
+import io.ktor.server.routing.*
+import no.nav.omsorgspenger.KtorHttp.forwardGet
 import no.nav.omsorgspenger.config.Config
-import no.nav.omsorgspenger.FuelHttp.forwardGet
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.slf4j.LoggerFactory
 
@@ -27,7 +27,7 @@ internal fun Route.AaregRoute(
                 "Nav-Consumer-Token" to stsToken
             )
 
-            call.forwardGet("$aaregUrl$path", extraHeaders, logger)
+            call.forwardGet("$aaregUrl$path", extraHeaders)
         }
     }
 }

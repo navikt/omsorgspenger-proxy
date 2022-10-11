@@ -1,18 +1,18 @@
 package no.nav.omsorgspenger.routes
 
-import io.ktor.application.*
+import io.ktor.server.application.*
 import io.ktor.http.*
-import io.ktor.request.uri
-import io.ktor.response.*
-import io.ktor.routing.Route
-import io.ktor.routing.options
-import io.ktor.routing.post
-import io.ktor.routing.route
+import io.ktor.server.request.uri
+import io.ktor.server.response.*
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.options
+import io.ktor.server.routing.post
+import io.ktor.server.routing.route
+import no.nav.omsorgspenger.KtorHttp.forwardOptions
+import no.nav.omsorgspenger.KtorHttp.forwardPost
 import no.nav.omsorgspenger.OpenAm
 import no.nav.omsorgspenger.OpenAm.Companion.harOpenAmToken
 import no.nav.omsorgspenger.config.Config
-import no.nav.omsorgspenger.FuelHttp.forwardOptions
-import no.nav.omsorgspenger.FuelHttp.forwardPost
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.slf4j.LoggerFactory
 
@@ -22,7 +22,8 @@ private const val NavConsumerToken = "Nav-Consumer-Token"
 internal fun Route.PdlRoute(
     pdlConfig: Config.PDL,
     stsClient: StsRestClient,
-    openAm: OpenAm) {
+    openAm: OpenAm
+) {
 
     route("/pdl{...}") {
 
@@ -44,7 +45,7 @@ internal fun Route.PdlRoute(
                 NavConsumerToken to stsAuthorizationHeader
             )
 
-            call.forwardPost(fullPdlPath, extraHeaders, logger)
+            call.forwardPost(fullPdlPath, extraHeaders)
         }
 
         options {
@@ -56,7 +57,7 @@ internal fun Route.PdlRoute(
 
             val extraHeaders = mapOf(HttpHeaders.Authorization to stsToken)
 
-            call.forwardOptions(fullPdlPath, extraHeaders, logger)
+            call.forwardOptions(fullPdlPath, extraHeaders)
         }
     }
 }

@@ -2,7 +2,7 @@ package no.nav.omsorgspenger
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.interfaces.DecodedJWT
-import io.ktor.application.*
+import io.ktor.server.application.*
 import no.nav.helse.dusseldorf.ktor.auth.EnforceEqualsOrContains
 import no.nav.helse.dusseldorf.ktor.auth.Issuer
 import no.nav.helse.dusseldorf.ktor.auth.JwtVerifier
@@ -12,7 +12,8 @@ import no.nav.omsorgspenger.Auth.discover
 import no.nav.omsorgspenger.config.Config
 
 internal class OpenAm(
-    openAmConfig: Config.OpenAM) {
+    openAmConfig: Config.OpenAM
+) {
     private val issuerOgJwksUri = openAmConfig.wellKnownUri.discover()
     internal val jwksUri = issuerOgJwksUri.second
 
@@ -31,16 +32,18 @@ internal class OpenAm(
         )
     )
 
-    private fun verifisert(call: ApplicationCall) : Pair<String, DecodedJWT> {
+    private fun verifisert(call: ApplicationCall): Pair<String, DecodedJWT> {
         require(call.harOpenAmToken()) {
             "Requesten inneholder ikke headeren $HeaderNavn"
         }
         val headerValue = call.request.headers[HeaderNavn]!!
         val jwt = headerValue.removePrefix("Bearer ")
 
-        jwtVerifier.verify(jwt).also { verified -> if (!verified) {
-            throw Throwblem(problemDetails)
-        }}
+        jwtVerifier.verify(jwt).also { verified ->
+            if (!verified) {
+                throw Throwblem(problemDetails)
+            }
+        }
 
         return headerValue to JWT.decode(jwt)
     }
@@ -62,6 +65,7 @@ internal class OpenAm(
             status = 403,
             detail = "Requesten inneholder ikke tilstrekkelige tilganger."
         )
+
         internal fun ApplicationCall.harOpenAmToken() = request.headers.contains(HeaderNavn)
     }
 }

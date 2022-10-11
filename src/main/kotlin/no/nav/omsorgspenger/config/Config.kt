@@ -57,7 +57,8 @@ internal object Config {
     }
 
     internal fun Map<String, String>.getOrFail(key: String) = getOrElse(key) {
-        throw IllegalStateException("Mangler Environment variable $key")
+        "test"
+        //throw IllegalStateException("Mangler Environment variable $key")
     }
 }
 

@@ -5,12 +5,9 @@ import no.nav.omsorgspenger.testutils.mocks.stubDokarkivproxy
 import no.nav.omsorgspenger.testutils.mocks.stubOppgave
 import no.nav.omsorgspenger.testutils.mocks.stubPdl
 
-internal class MockedEnvironment(
-    wireMockPort: Int = 8082
-) {
+internal class MockedEnvironment {
 
     internal val wireMockServer = WireMockBuilder()
-        .withPort(wireMockPort)
         .withAzureSupport()
         .withNaisStsSupport()
         .build()

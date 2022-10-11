@@ -11,6 +11,7 @@ internal class ApplicationContext(
     internal class Builder(
         internal var env: Map<String,String>? = null,
         internal var ldapGateway: LdapGateway? = null) {
+
         internal fun build() : ApplicationContext {
             val benyttetEnv = env ?: System.getenv()
 

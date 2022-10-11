@@ -1,12 +1,15 @@
 package no.nav.omsorgspenger
 
-import io.ktor.application.*
-import io.ktor.auth.Authentication
-import io.ktor.auth.authenticate
-import io.ktor.features.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.authenticate
 import io.ktor.http.*
-import io.ktor.jackson.jackson
-import io.ktor.routing.Routing
+import io.ktor.serialization.jackson.*
+import io.ktor.server.routing.Routing
+import io.ktor.server.plugins.callid.CallId
+import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.statuspages.*
 import no.nav.helse.dusseldorf.ktor.auth.AuthStatusPages
 import no.nav.helse.dusseldorf.ktor.auth.multipleJwtIssuers
 import no.nav.helse.dusseldorf.ktor.core.*
@@ -29,7 +32,9 @@ import no.nav.omsorgspenger.sts.StsRestClient
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
-internal fun Application.app(applicationContext: ApplicationContext = ApplicationContext.Builder().build()) {
+internal fun Application.app(
+    applicationContext: ApplicationContext
+) {
     install(ContentNegotiation) {
         jackson()
     }
@@ -40,11 +45,13 @@ internal fun Application.app(applicationContext: ApplicationContext = Applicatio
     }
 
     install(CallId) {
-        fromFirstNonNullHeader(headers = listOf(
-            HttpHeaders.XCorrelationId,
-            "Nav-Call-Id",
-            "Nav-CallId"
-        ))
+        fromFirstNonNullHeader(
+            headers = listOf(
+                HttpHeaders.XCorrelationId,
+                "Nav-Call-Id",
+                "Nav-CallId"
+            )
+        )
     }
 
     install(CallLogging) {
