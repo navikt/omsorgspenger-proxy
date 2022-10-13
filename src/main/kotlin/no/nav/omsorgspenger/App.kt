@@ -5,7 +5,7 @@ import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.authenticate
-import io.ktor.server.plugins.callid.CallId
+import io.ktor.server.plugins.callid.*
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.statuspages.*
@@ -57,6 +57,7 @@ internal fun Application.app(
     install(CallLogging) {
         correlationIdAndRequestIdInMdc()
         logRequests() // Fikser fancy color logging som printar ansi koder i log output.
+        callIdMdc("callId")
     }
 
     val issuers = applicationContext.env.omsorgspengerProxyIssuers()

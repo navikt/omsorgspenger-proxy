@@ -1,7 +1,7 @@
 package no.nav.omsorgspenger
 
 import io.ktor.client.call.*
-import io.ktor.client.engine.java.*
+import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -10,7 +10,6 @@ import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
-import io.ktor.util.*
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpDelete
 import no.nav.helse.dusseldorf.ktor.client.SimpleHttpClient.httpGet
@@ -22,7 +21,7 @@ import org.slf4j.LoggerFactory
 
 internal object KtorHttp {
 
-    private val config = SimpleHttpClient.Config(engine = Java)
+    private val config = SimpleHttpClient.Config(engine = OkHttp)
     private val logger = LoggerFactory.getLogger(KtorHttp::class.java)
 
     internal suspend fun ApplicationCall.forwardPatch(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) {
@@ -93,7 +92,7 @@ internal object KtorHttp {
         }
     }
 
-    internal suspend fun ApplicationCall.doGet(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) =
+    private suspend fun ApplicationCall.doGet(toUrl: String, extraHeaders: Map<String, Any?> = emptyMap()) =
         toUrl.httpGet(config) { builder ->
             populateBuilder(
                 builder = builder,
@@ -106,7 +105,7 @@ internal object KtorHttp {
         forward { doGet(toUrl, extraHeaders) }
     }
 
-    internal suspend fun ApplicationCall.forward(
+    private suspend fun ApplicationCall.forward(
         respondOnError: Boolean = true,
         block: suspend () -> Pair<HttpRequestData, Result<HttpResponse>>
     ): Boolean {
@@ -125,9 +124,9 @@ internal object KtorHttp {
                     val urlUtenQueryParameters = "${httpRequestData.url}".substringBefore("?")
                     logger.error(
                         "Uventet response gjennom proxy: Method=[${httpRequestData.method.value}], Url=[$urlUtenQueryParameters], QueryNames=$queryNames, Accept=[${httpRequestData.headers[HttpHeaders.Accept]}], HttpStatusCode=[${it.status.value}], Response=[${
-                        String(
-                            responseBody
-                        )
+                            String(
+                                responseBody
+                            )
                         }]"
                     )
                 }
@@ -165,7 +164,6 @@ internal object KtorHttp {
         )
     }
 
-    @OptIn(InternalAPI::class)
     private fun ApplicationCall.populateBuilder(
         builder: HttpRequestBuilder,
         body: ByteArray?,
@@ -173,9 +171,11 @@ internal object KtorHttp {
     ) {
         // Body
         body?.also {
-            builder.body = ByteArrayContent(
-                bytes = it,
-                contentType = request.contentType()
+            builder.setBody(
+                ByteArrayContent(
+                    bytes = it,
+                    contentType = request.contentType()
+                )
             )
         }
 
