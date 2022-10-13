@@ -2,7 +2,7 @@ package no.nav.omsorgspenger.routes
 
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
-import no.nav.omsorgspenger.KtorHttp.forwardGet
+import no.nav.omsorgspenger.FuelHttp.forwardGet
 import no.nav.omsorgspenger.OpenAm
 import org.slf4j.LoggerFactory
 
@@ -13,6 +13,6 @@ internal fun Route.OpenAmPublicRoute(
 ) {
     val jwksUri = openAm.jwksUri.toString()
     get("/open-am/keys") {
-        call.forwardGet(toUrl = jwksUri, extraHeaders = emptyMap())
+        call.forwardGet(toUrl = jwksUri, extraHeaders = emptyMap(), logger)
     }
 }

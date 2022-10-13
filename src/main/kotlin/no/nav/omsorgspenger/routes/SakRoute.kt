@@ -4,8 +4,8 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
-import no.nav.omsorgspenger.KtorHttp.forwardGet
-import no.nav.omsorgspenger.KtorHttp.forwardPost
+import no.nav.omsorgspenger.FuelHttp.forwardGet
+import no.nav.omsorgspenger.FuelHttp.forwardPost
 import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.slf4j.LoggerFactory
@@ -29,10 +29,10 @@ internal fun Route.SakRoute(
 
     route("$Path{...}") {
         get {
-            call.forwardGet(call.toUrl(), accessToken())
+            call.forwardGet(call.toUrl(), accessToken(), logger)
         }
         post {
-            call.forwardPost(call.toUrl(), accessToken())
+            call.forwardPost(call.toUrl(), accessToken(), logger)
         }
     }
 }

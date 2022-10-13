@@ -8,8 +8,8 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.options
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import no.nav.omsorgspenger.KtorHttp.forwardOptions
-import no.nav.omsorgspenger.KtorHttp.forwardPost
+import no.nav.omsorgspenger.FuelHttp.forwardOptions
+import no.nav.omsorgspenger.FuelHttp.forwardPost
 import no.nav.omsorgspenger.OpenAm
 import no.nav.omsorgspenger.OpenAm.Companion.harOpenAmToken
 import no.nav.omsorgspenger.config.Config
@@ -43,7 +43,7 @@ internal fun Route.PdlRoute(
                 NavConsumerToken to stsAuthorizationHeader
             )
 
-            call.forwardPost(fullPdlPath, extraHeaders)
+            call.forwardPost(fullPdlPath, extraHeaders, logger)
         }
 
         options {
@@ -55,7 +55,7 @@ internal fun Route.PdlRoute(
 
             val extraHeaders = mapOf(HttpHeaders.Authorization to stsToken)
 
-            call.forwardOptions(fullPdlPath, extraHeaders)
+            call.forwardOptions(fullPdlPath, extraHeaders, logger)
         }
     }
 }

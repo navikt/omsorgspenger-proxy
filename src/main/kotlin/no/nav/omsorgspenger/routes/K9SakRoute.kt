@@ -4,8 +4,8 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
-import no.nav.omsorgspenger.KtorHttp.forwardGet
-import no.nav.omsorgspenger.KtorHttp.forwardPost
+import no.nav.omsorgspenger.FuelHttp.forwardGet
+import no.nav.omsorgspenger.FuelHttp.forwardPost
 import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.slf4j.LoggerFactory
@@ -31,27 +31,27 @@ internal fun Route.K9SakRoute(
 
     route(Path) {
         post("/api/fordel/journalposter") {
-            call.forwardPost(call.toUrl(), accessToken())
+            call.forwardPost(call.toUrl(), accessToken(), logger)
         }
 
         post("/api/fordel/fagsak/opprett") {
-            call.forwardPost(call.toUrl(), accessToken())
+            call.forwardPost(call.toUrl(), accessToken(), logger)
         }
 
         post("/api/fagsak/siste") {
-            call.forwardPost(call.toUrl(), accessToken())
+            call.forwardPost(call.toUrl(), accessToken(), logger)
         }
 
         post("/api/fordel/psb-infotrygd/finnes") {
-            call.forwardPost(call.toUrl(), accessToken())
+            call.forwardPost(call.toUrl(), accessToken(), logger)
         }
 
         post("/api/fagsak/match") {
-            call.forwardPost(call.toUrl(), accessToken())
+            call.forwardPost(call.toUrl(), accessToken(), logger)
         }
 
         get("/internal/health/isReady") {
-            call.forwardGet(call.toUrl(), utenAuthorizationHeader)
+            call.forwardGet(call.toUrl(), utenAuthorizationHeader, logger)
         }
     }
 }

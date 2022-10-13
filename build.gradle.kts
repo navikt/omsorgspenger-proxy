@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val junitJupiterVersion = "5.9.1"
 val dusseldorfVersion = "3.2.1.2-ce40a5b"
 val ktorVersion = "2.1.2"
+val fuelVersion = "2.3.1"
 
 val jsonassertVersion = "1.5.1"
 
@@ -27,6 +28,9 @@ dependencies {
     implementation("no.nav.helse:dusseldorf-ktor-jackson:$dusseldorfVersion")
     implementation("no.nav.helse:dusseldorf-oauth2-client:$dusseldorfVersion")
     implementation("no.nav.helse:dusseldorf-ktor-metrics:$dusseldorfVersion")
+
+    implementation("com.github.kittinunf.fuel:fuel:$fuelVersion")
+    implementation("com.github.kittinunf.fuel:fuel-coroutines:$fuelVersion")
 
     // Test
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
