@@ -1,12 +1,15 @@
 package no.nav.omsorgspenger
 
-import io.ktor.application.*
-import io.ktor.auth.Authentication
-import io.ktor.auth.authenticate
-import io.ktor.features.*
 import io.ktor.http.*
-import io.ktor.jackson.jackson
-import io.ktor.routing.Routing
+import io.ktor.serialization.jackson.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.authenticate
+import io.ktor.server.plugins.callid.*
+import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.routing.Routing
 import no.nav.helse.dusseldorf.ktor.auth.AuthStatusPages
 import no.nav.helse.dusseldorf.ktor.auth.multipleJwtIssuers
 import no.nav.helse.dusseldorf.ktor.core.*
@@ -20,16 +23,18 @@ import no.nav.omsorgspenger.Auth.omsorgspengerProxyIssuers
 import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.ldap.LdapService
 import no.nav.omsorgspenger.routes.*
+import no.nav.omsorgspenger.routes.AaregRoute
 import no.nav.omsorgspenger.routes.ActiveDirectoryRoute
 import no.nav.omsorgspenger.routes.DokarkivproxyRoute
 import no.nav.omsorgspenger.routes.OppgaveRoute
 import no.nav.omsorgspenger.routes.PdlRoute
-import no.nav.omsorgspenger.routes.AaregRoute
 import no.nav.omsorgspenger.sts.StsRestClient
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
-internal fun Application.app(applicationContext: ApplicationContext = ApplicationContext.Builder().build()) {
+internal fun Application.app(
+    applicationContext: ApplicationContext = ApplicationContext.Builder().build()
+) {
     install(ContentNegotiation) {
         jackson()
     }
@@ -40,16 +45,19 @@ internal fun Application.app(applicationContext: ApplicationContext = Applicatio
     }
 
     install(CallId) {
-        fromFirstNonNullHeader(headers = listOf(
-            HttpHeaders.XCorrelationId,
-            "Nav-Call-Id",
-            "Nav-CallId"
-        ))
+        fromFirstNonNullHeader(
+            headers = listOf(
+                HttpHeaders.XCorrelationId,
+                "Nav-Call-Id",
+                "Nav-CallId"
+            )
+        )
     }
 
     install(CallLogging) {
         correlationIdAndRequestIdInMdc()
         logRequests() // Fikser fancy color logging som printar ansi koder i log output.
+        callIdMdc("callId")
     }
 
     val issuers = applicationContext.env.omsorgspengerProxyIssuers()

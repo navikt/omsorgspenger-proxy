@@ -3,6 +3,9 @@
 Proxy for at omsorgspenger-tjenester i gcp kan kalle tjenester i fss.
 Tjenesten krever Azure-tokens og veksler til hva den bakomforliggende tjenesten trenger.
 
+### Deployment
+Push til main deployer til prod. Bruk 'ci skip' i commit-melding alternativt kjør 'Bygg og deploy' worfklow-action direkt mot branch for att deploye kun til dev.
+
 ## Tjenester dekker
 * /active-directory/me/memberOf (get) - Kun når Open-AM token er i bruk - ellers kan man hente det fra Azure token claim `groups`
 * /dokarkivproxy (put)

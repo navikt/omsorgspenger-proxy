@@ -60,4 +60,3 @@ internal object Config {
         throw IllegalStateException("Mangler Environment variable $key")
     }
 }
-

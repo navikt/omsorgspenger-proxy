@@ -1,100 +1,103 @@
 package no.nav.omsorgspenger.routes
 
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.TestApplicationEngine
-import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.setBody
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.server.testing.*
 import no.nav.omsorgspenger.testutils.AuthorizationHeaders.medAzure
-import no.nav.omsorgspenger.testutils.TestApplicationExtension
+import no.nav.omsorgspenger.testutils.MockedEnvironment
+import no.nav.omsorgspenger.testutils.mockApp
 import no.nav.omsorgspenger.testutils.mocks.ProxiedHeader
-import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.TestInstance
 
-@ExtendWith(TestApplicationExtension::class)
-internal class OppgaveRouteTest(
-    private val testApplicationEngine: TestApplicationEngine
-) {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+internal class OppgaveRouteTest {
     private val oppgaveUrl = "/oppgave/api/v1/blabla?testparam=any"
+    private lateinit var mockedEnvironment: MockedEnvironment
+
+    @BeforeAll
+    fun setup() {
+        mockedEnvironment = MockedEnvironment().start()
+    }
+
+    @AfterAll
+    fun tearDown() {
+        mockedEnvironment.stop()
+    }
 
     @Test
-    fun `ingen token gir 401`() {
-        with(testApplicationEngine) {
-            handleRequest(HttpMethod.Get, oppgaveUrl) {}.apply {
-                assertThat(response.status()).isEqualTo(HttpStatusCode.Unauthorized)
-            }
+    fun `ingen token gir 401`() = testApplication {
+        mockApp(mockedEnvironment)
+        client.get(oppgaveUrl).apply {
+            Assertions.assertEquals(HttpStatusCode.Unauthorized, this.status)
         }
     }
 
     @Test
-    fun `GET - token utstedt til oms-proxy proxyer request`() {
-        with(testApplicationEngine) {
-            handleRequest(HttpMethod.Get, oppgaveUrl) {
-                medAzure(clientId = "allowed-1")
-                addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(ProxiedHeader, "anything")
-            }.apply {
-                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
-                assertThat(response.headers[HttpHeaders.ContentType]).isEqualTo("application/json")
-            }
+    fun `GET - token utstedt til oms-proxy proxyer request`() = testApplication {
+        mockApp(mockedEnvironment)
+        client.get(oppgaveUrl) {
+            medAzure(clientId = "allowed-1")
+            header(HttpHeaders.ContentType, "application/json")
+            header(ProxiedHeader, "anything")
+        }.apply {
+            Assertions.assertEquals(HttpStatusCode.OK, this.status)
+            Assertions.assertEquals("application/json", this.headers[HttpHeaders.ContentType])
         }
     }
 
     @Test
-    fun `POST - token utstedt til oms-proxy proxyer request`() {
-        with(testApplicationEngine) {
-            handleRequest(HttpMethod.Post, oppgaveUrl) {
-                medAzure(clientId = "allowed-2")
-                addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(ProxiedHeader, "anything")
-                setBody("{}")
-            }.apply {
-                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
-                assertThat(response.headers[HttpHeaders.ContentType]).isEqualTo("application/json")
-            }
+    fun `POST - token utstedt til oms-proxy proxyer request`() = testApplication {
+        mockApp(mockedEnvironment)
+        client.post(oppgaveUrl) {
+            medAzure(clientId = "allowed-2")
+            header(HttpHeaders.ContentType, "application/json")
+            header(ProxiedHeader, "anything")
+            setBody("{}")
+        }.apply {
+            Assertions.assertEquals(HttpStatusCode.OK, this.status)
+            Assertions.assertEquals("application/json", this.headers[HttpHeaders.ContentType])
         }
     }
 
     @Test
-    fun `PATCH - token utstedt til oms-proxy proxyer request`() {
-        with(testApplicationEngine) {
-            handleRequest(HttpMethod.Patch, "/oppgave/patch-request") {
-                medAzure(clientId = "allowed-2")
-                addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(ProxiedHeader, "anything")
-                setBody("{}")
-            }.apply {
-                assertThat(response.status()).isEqualTo(HttpStatusCode.NoContent)
-                assertThat(response.headers["X-Test-Header"]).isEqualTo("Er-Satt")
-            }
+    fun `PATCH - token utstedt til oms-proxy proxyer request`() = testApplication {
+        mockApp(mockedEnvironment)
+        client.patch("/oppgave/patch-request") {
+            medAzure(clientId = "allowed-2")
+            header(HttpHeaders.ContentType, "application/json")
+            header(ProxiedHeader, "anything")
+            setBody("{}")
+        }.apply {
+            Assertions.assertEquals(HttpStatusCode.NoContent, this.status)
+            Assertions.assertEquals("Er-Satt", this.headers["X-Test-Header"])
         }
     }
 
     @Test
-    fun `token scopet til annen tjeneste gir 403`() {
-        with(testApplicationEngine) {
-            handleRequest(HttpMethod.Get, oppgaveUrl) {
-                medAzure(audience = "ikke-oms-proxy")
-                addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(ProxiedHeader, "anything")
-            }.apply {
-                assertThat(response.status()).isEqualTo(HttpStatusCode.Forbidden)
-            }
+    fun `token scopet til annen tjeneste gir 403`() = testApplication {
+        mockApp(mockedEnvironment)
+        client.get(oppgaveUrl) {
+            medAzure(audience = "ikke-oms-proxy")
+            header(HttpHeaders.ContentType, "application/json")
+            header(ProxiedHeader, "anything")
+        }.apply {
+            Assertions.assertEquals(HttpStatusCode.Forbidden, this.status)
         }
     }
 
     @Test
-    fun `token fra en ikke authorized client gir 403`() {
-        with(testApplicationEngine) {
-            handleRequest(HttpMethod.Get, oppgaveUrl) {
-                medAzure(clientId = "not-allowed")
-                addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(ProxiedHeader, "anything")
-            }.apply {
-                assertThat(response.status()).isEqualTo(HttpStatusCode.Forbidden)
-            }
+    fun `token fra en ikke authorized client gir 403`() = testApplication {
+        mockApp(mockedEnvironment)
+        client.get(oppgaveUrl) {
+            medAzure(clientId = "not-allowed")
+            header(HttpHeaders.ContentType, "application/json")
+            header(ProxiedHeader, "anything")
+        }.apply {
+            Assertions.assertEquals(HttpStatusCode.Forbidden, this.status)
         }
     }
 }

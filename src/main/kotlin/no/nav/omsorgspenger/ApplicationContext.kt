@@ -6,12 +6,15 @@ import no.nav.omsorgspenger.ldap.LdapGateway
 
 internal class ApplicationContext(
     internal val env: Map<String, String>,
-    internal val ldapGateway: LdapGateway) {
+    internal val ldapGateway: LdapGateway
+) {
 
     internal class Builder(
-        internal var env: Map<String,String>? = null,
-        internal var ldapGateway: LdapGateway? = null) {
-        internal fun build() : ApplicationContext {
+        internal var env: Map<String, String>? = null,
+        internal var ldapGateway: LdapGateway? = null
+    ) {
+
+        internal fun build(): ApplicationContext {
             val benyttetEnv = env ?: System.getenv()
 
             return ApplicationContext(

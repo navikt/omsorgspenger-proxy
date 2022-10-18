@@ -45,14 +45,14 @@ private fun WireMockServer.stubOppgavePatch(): WireMockServer {
         WireMock.patch(urlPathMatching(".*$oppgaveUrlPath/patch-request"))
             .withHeader(HttpHeaders.Authorization, containing("Bearer "))
             .withRequestBody(EqualToPattern("{}"))
-            .willReturn(aResponse()
-                .withStatus(204)
-                .withHeader("X-Test-Header", "Er-Satt")
+            .willReturn(
+                aResponse()
+                    .withStatus(204)
+                    .withHeader("X-Test-Header", "Er-Satt")
             )
     )
     return this
 }
-
 
 internal fun WireMockServer.oppgaveUrl(): String = baseUrl() + oppgaveUrlPath
 

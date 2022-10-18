@@ -13,6 +13,7 @@ import java.net.URI
 
 internal object Auth {
     private val logger = LoggerFactory.getLogger(Auth::class.java)
+
     /**
      * Om tokenet er scopet til 'omsorgspenger-proxy' vil tjenesten
      * veksle tokens iht. hva den bakomforliggende tjenesten trenger.
@@ -29,22 +30,21 @@ internal object Auth {
      */
     private const val AzureProxyScopedAlias = "azure_proxy_scoped"
 
-    internal fun Map<Issuer,Set<ClaimRule>>.azureProxyScoped() = filterKeys {
+    internal fun Map<Issuer, Set<ClaimRule>>.azureProxyScoped() = filterKeys {
         it.alias() == AzureProxyScopedAlias
     }.also { require(it.size == 1) }.allIssuers()
 
-    internal fun Map<Issuer,Set<ClaimRule>>.azureAnyScoped() = filterKeys {
+    internal fun Map<Issuer, Set<ClaimRule>>.azureAnyScoped() = filterKeys {
         it.alias() == AzureAnyScopeAlias
     }.also { require(it.size == 1) }.allIssuers()
 
     internal fun Map<String, String>.omsorgspengerProxyIssuers(): Map<Issuer, Set<ClaimRule>> {
-
         val enforceAuthorizedClient = AzureClaimRules.Companion.EnforceAuthorizedClient(
             authorizedClients = JSONArray(getOrFail("AZURE_APP_PRE_AUTHORIZED_APPS"))
-              .map { it as JSONObject }
-              .map { it.getString("clientId") }
-              .toSet()
-              .also { logger.info("AuthorizedClientIds=$it") }
+                .map { it as JSONObject }
+                .map { it.getString("clientId") }
+                .toSet()
+                .also { logger.info("AuthorizedClientIds=$it") }
         )
 
         val (azureIssuer, azureJwksUri) = URI(getOrFail("AZURE_APP_WELL_KNOWN_URL")).discover()
@@ -81,7 +81,8 @@ internal object Auth {
 
     internal class AzureAnyScopedClaimRule(
         omsorgspengerProxyClientId: String,
-        private val enforceAuthorizedClient: AzureClaimRules.Companion.EnforceAuthorizedClient) : ClaimRule {
+        private val enforceAuthorizedClient: AzureClaimRules.Companion.EnforceAuthorizedClient
+    ) : ClaimRule {
         private val enforceAudience = StandardClaimRules.Companion.EnforceAudienceEquals(
             requiredAudience = omsorgspengerProxyClientId
         )
@@ -96,8 +97,10 @@ internal object Auth {
         }
     }
 
-    internal fun URI.discover(): Pair<String, URI> = this.toString().let { url -> runBlocking {
-        val json = JSONObject(url.httpGet().readTextOrThrow().second)
-        requireNotNull(json.getString("issuer")) to URI(requireNotNull(json.getString("jwks_uri")))
-    }}
+    internal fun URI.discover(): Pair<String, URI> = this.toString().let { url ->
+        runBlocking {
+            val json = JSONObject(url.httpGet().readTextOrThrow().second)
+            requireNotNull(json.getString("issuer")) to URI(requireNotNull(json.getString("jwks_uri")))
+        } 
+    }
 }

@@ -1,18 +1,17 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val junitJupiterVersion = "5.8.2"
-val dusseldorfVersion = "3.1.6.8-1a4651d"
-val ktorVersion = "1.6.8"
+val junitJupiterVersion = "5.9.1"
+val dusseldorfVersion = "3.2.1.2-ce40a5b"
+val ktorVersion = "2.1.2"
 val fuelVersion = "2.3.1"
 
-val jsonassertVersion = "1.5.0"
-val assertjVersion = "3.22.0"
+val jsonassertVersion = "1.5.1"
 
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.6.21"
+    kotlin("jvm") version "1.7.20"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -22,26 +21,23 @@ java {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("no.nav.helse:dusseldorf-ktor-health:$dusseldorfVersion")
     implementation("no.nav.helse:dusseldorf-ktor-auth:$dusseldorfVersion")
     implementation("no.nav.helse:dusseldorf-ktor-core:$dusseldorfVersion")
     implementation("no.nav.helse:dusseldorf-ktor-client:$dusseldorfVersion")
-    implementation("com.github.kittinunf.fuel:fuel:$fuelVersion")
-    implementation("com.github.kittinunf.fuel:fuel-coroutines:$fuelVersion")
+    implementation("no.nav.helse:dusseldorf-ktor-jackson:$dusseldorfVersion")
     implementation("no.nav.helse:dusseldorf-oauth2-client:$dusseldorfVersion")
     implementation("no.nav.helse:dusseldorf-ktor-metrics:$dusseldorfVersion")
 
+    implementation("com.github.kittinunf.fuel:fuel:$fuelVersion")
+    implementation("com.github.kittinunf.fuel:fuel-coroutines:$fuelVersion")
+
     // Test
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
-    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion") {
-        exclude(group = "org.eclipse.jetty")
-    }
+    testImplementation("io.ktor:ktor-server-test-host-jvm:$ktorVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     testImplementation("no.nav.helse:dusseldorf-test-support:$dusseldorfVersion")
-    testImplementation("org.assertj:assertj-core:$assertjVersion")
     testImplementation("org.skyscreamer:jsonassert:$jsonassertVersion")
-
 }
 
 repositories {
@@ -68,7 +64,6 @@ tasks {
         kotlinOptions.jvmTarget = "17"
     }
 
-
     withType<Test> {
         useJUnitPlatform()
         testLogging {
@@ -89,6 +84,6 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "7.4.2"
+        gradleVersion = "7.5.1"
     }
 }

@@ -1,12 +1,12 @@
 package no.nav.omsorgspenger.routes
 
-import io.ktor.application.call
 import io.ktor.http.HttpHeaders
-import io.ktor.request.uri
-import io.ktor.routing.*
-import no.nav.omsorgspenger.config.Config
+import io.ktor.server.application.call
+import io.ktor.server.request.uri
+import io.ktor.server.routing.*
 import no.nav.omsorgspenger.FuelHttp.forwardGet
 import no.nav.omsorgspenger.FuelHttp.forwardPut
+import no.nav.omsorgspenger.config.Config
 import no.nav.omsorgspenger.sts.StsRestClient
 import org.slf4j.LoggerFactory
 
@@ -14,8 +14,8 @@ private val logger = LoggerFactory.getLogger("no.nav.DokarkivproxyRoute")
 
 internal fun Route.DokarkivproxyRoute(
     dokarkivProxyConfig: Config.Dokarkivproxy,
-    stsClient: StsRestClient) {
-
+    stsClient: StsRestClient
+) {
     fun headers() = mapOf(
         HttpHeaders.Authorization to stsClient.token().asAuthoriationHeader()
     )
