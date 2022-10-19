@@ -1,4 +1,4 @@
-FROM amazoncorretto:17-alpine as corretto-jdk
+FROM amazoncorretto:17-alpine@sha256:c05e52706db17fe23a6853502c73dafebca0640b4b157324fea028fe5730191c as corretto-jdk
 LABEL org.opencontainers.image.source=https://github.com/navikt/omsorgspenger-proxy
 
 RUN apk add --no-cache binutils
@@ -15,7 +15,7 @@ RUN $JAVA_HOME/bin/jlink \
          --output /customjre
 
 # main app image
-FROM alpine:3.16
+FROM alpine:3.16@sha256:bc41182d7ef5ffc53a40b044e725193bc10142a1243f395ee852a8d9730fc2ad
 ENV JAVA_HOME=/jre
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 ENV LC_ALL="nb_NO.UTF-8"
@@ -28,11 +28,12 @@ USER 1000
 
 COPY --from=corretto-jdk /customjre $JAVA_HOME
 COPY --from=corretto-jdk /usr/bin/dumb-init /usr/bin/dumb-init
-COPY init-scripts/ /app/init-scripts
-COPY entrypoint.sh /app/entrypoint.sh
-COPY run-java.sh /app/run-java.sh
+COPY /docker/init-scripts/ /app/init-scripts
+COPY /docker/entrypoint.sh /app/entrypoint.sh
+COPY /docker/run-java.sh /app/run-java.sh
 
 COPY --chown=1000:1000 build/libs/app.jar /app/app.jar
 WORKDIR /app
 
-ENTRYPOINT ["/usr/bin/dumb-init", "--", "/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+CMD ["/jre/bin/java", "-jar", "/app/app.jar"]
