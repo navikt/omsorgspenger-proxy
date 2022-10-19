@@ -18,6 +18,7 @@ RUN $JAVA_HOME/bin/jlink \
 FROM alpine:3.16@sha256:bc41182d7ef5ffc53a40b044e725193bc10142a1243f395ee852a8d9730fc2ad
 ENV JAVA_HOME=/jre
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
+ENV APP_JAR=/app/app.jar
 ENV LC_ALL="nb_NO.UTF-8"
 ENV LANG="nb_NO.UTF-8"
 ENV TZ="Europe/Oslo"
@@ -34,6 +35,7 @@ COPY /docker/run-java.sh /app/run-java.sh
 
 COPY --chown=1000:1000 build/libs/app.jar /app/app.jar
 WORKDIR /app
+EXPOSE 8080
 
-ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["/jre/bin/java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--", "/app/entrypoint.sh"]
+#CMD ["/jre/bin/java", "-jar", "/app/app.jar"]
