@@ -25,17 +25,18 @@ ENV TZ="Europe/Oslo"
 
 RUN adduser --no-create-home -u 1000 -D someone
 RUN mkdir /app && chown -R someone /app
-USER 1000
 
 COPY --from=corretto-jdk /customjre $JAVA_HOME
 COPY --from=corretto-jdk /usr/bin/dumb-init /usr/bin/dumb-init
 COPY /docker/init-scripts/ /app/init-scripts
 COPY /docker/entrypoint.sh /app/entrypoint.sh
 COPY /docker/run-java.sh /app/run-java.sh
+COPY build/libs/app.jar /app/app.jar
 
-COPY --chown=1000:1000 build/libs/app.jar /app/app.jar
+RUN chown -R 1000:1000 /app/*
+
+
+USER 1000
 WORKDIR /app
-EXPOSE 8080
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--", "/app/entrypoint.sh"]
-#CMD ["/jre/bin/java", "-jar", "/app/app.jar"]
