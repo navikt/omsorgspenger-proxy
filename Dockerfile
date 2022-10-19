@@ -35,7 +35,6 @@ COPY build/libs/app.jar /app/app.jar
 
 RUN chown -R 1000:1000 /app/*
 
-
 USER 1000
 WORKDIR /app
 
