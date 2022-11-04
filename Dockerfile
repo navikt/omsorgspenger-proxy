@@ -1,4 +1,4 @@
-FROM amazoncorretto:17-alpine@sha256:c05e52706db17fe23a6853502c73dafebca0640b4b157324fea028fe5730191c as corretto-jdk
+FROM amazoncorretto:17-alpine as corretto-jdk
 LABEL org.opencontainers.image.source=https://github.com/navikt/omsorgspenger-proxy
 
 RUN apk add --no-cache binutils
@@ -15,7 +15,7 @@ RUN $JAVA_HOME/bin/jlink \
          --output /customjre
 
 # main app image
-FROM alpine:3.16@sha256:bc41182d7ef5ffc53a40b044e725193bc10142a1243f395ee852a8d9730fc2ad
+FROM alpine:3.16
 ENV JAVA_HOME=/jre
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 ENV APP_JAR=/app/app.jar
