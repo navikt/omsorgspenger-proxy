@@ -25,12 +25,8 @@ import no.nav.omsorgspenger.Auth.azureAnyScoped
 import no.nav.omsorgspenger.Auth.azureProxyScoped
 import no.nav.omsorgspenger.Auth.omsorgspengerProxyIssuers
 import no.nav.omsorgspenger.config.Config
-import no.nav.omsorgspenger.routes.AaregRoute
-import no.nav.omsorgspenger.routes.DokarkivproxyRoute
 import no.nav.omsorgspenger.routes.InfotrygdGrunnlagPaaroerendeSykdomRoute
 import no.nav.omsorgspenger.routes.K9SakRoute
-import no.nav.omsorgspenger.routes.OppgaveRoute
-import no.nav.omsorgspenger.routes.SafRoute
 import no.nav.omsorgspenger.routes.SakRoute
 import no.nav.omsorgspenger.sts.StsRestClient
 
@@ -85,10 +81,6 @@ internal fun Application.app(
         healthService
     )
 
-    val openAm = OpenAm(
-        openAmConfig = Config.OpenAM(applicationContext.env)
-    )
-
     install(Routing) {
         HealthRoute(healthService = healthService)
         MetricsRoute()
@@ -101,24 +93,8 @@ internal fun Application.app(
         }
         authenticate(*issuers.azureProxyScoped()) {
             // Underliggende tjenester støtter ikke Azure-tokens, veksler til tokens de støtter.
-            AaregRoute(
-                aaregConfig = Config.AAREG(applicationContext.env),
-                stsClient = stsClient
-            )
-            OppgaveRoute(
-                oppgaveConfig = Config.Oppgave(applicationContext.env),
-                stsClient = stsClient
-            )
-            DokarkivproxyRoute(
-                dokarkivProxyConfig = Config.Dokarkivproxy(applicationContext.env),
-                stsClient = stsClient
-            )
             K9SakRoute(
                 config = Config.K9Sak(applicationContext.env),
-                stsClient = stsClient
-            )
-            SafRoute(
-                config = Config.SAF(applicationContext.env),
                 stsClient = stsClient
             )
             SakRoute(
