@@ -33,7 +33,7 @@ import no.nav.omsorgspenger.sts.StsRestClient
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 internal fun Application.app(
-    applicationContext: ApplicationContext = ApplicationContext.Builder().build()
+    env: Map<String, String> = System.getenv()
 ) {
     install(ContentNegotiation) {
         jackson()
@@ -60,20 +60,18 @@ internal fun Application.app(
         callIdMdc("callId")
     }
 
-    val issuers = applicationContext.env.omsorgspengerProxyIssuers()
+    val issuers = env.omsorgspengerProxyIssuers()
 
     install(Authentication) {
         multipleJwtIssuers(issuers)
     }
 
     val stsClient = StsRestClient(
-        stsConfig = Config.STS(applicationContext.env),
-        serviceUserConfig = Config.ServiceUser(applicationContext.env)
+        stsConfig = Config.STS(env),
+        serviceUserConfig = Config.ServiceUser(env)
     )
     val healthService = HealthService(
-        setOf(
-            stsClient
-        )
+        setOf(stsClient)
     )
 
     HealthReporter(
@@ -88,17 +86,17 @@ internal fun Application.app(
         authenticate(*issuers.azureAnyScoped()) {
             // Underliggende tjenester støtter Azure-tokens, men ikke tilgjengeliggjort i GCP
             InfotrygdGrunnlagPaaroerendeSykdomRoute(
-                config = Config.InfotrygdGrunnlagPaaroerendeSykdom(applicationContext.env)
+                config = Config.InfotrygdGrunnlagPaaroerendeSykdom(env)
             )
         }
         authenticate(*issuers.azureProxyScoped()) {
             // Underliggende tjenester støtter ikke Azure-tokens, veksler til tokens de støtter.
             K9SakRoute(
-                config = Config.K9Sak(applicationContext.env),
+                config = Config.K9Sak(env),
                 stsClient = stsClient
             )
             SakRoute(
-                config = Config.Sak(applicationContext.env),
+                config = Config.Sak(env),
                 stsClient = stsClient
             )
         }

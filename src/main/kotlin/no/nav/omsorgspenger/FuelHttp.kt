@@ -1,7 +1,6 @@
 package no.nav.omsorgspenger
 
 import com.github.kittinunf.fuel.*
-import com.github.kittinunf.fuel.core.Method
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.Response
 import com.github.kittinunf.fuel.coroutines.awaitByteArrayResponseResult
@@ -15,13 +14,9 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondBytes
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
 import org.slf4j.Logger
 
 internal object FuelHttp {
-    @Deprecated("Bruker OkHttp istedenfor")
     internal suspend fun ApplicationCall.forwardPost(toUrl: String, extraHeaders: Map<String, Any?>, logger: Logger) {
         val parameters = request.queryParameters.toFuel()
         val postRequest = toUrl
@@ -31,31 +26,12 @@ internal object FuelHttp {
         forwardRequest(postRequest, extraHeaders, logger)
     }
 
-    @Deprecated("Bruker OkHttp istedenfor")
-    internal suspend fun ApplicationCall.forwardPut(toUrl: String, extraHeaders: Map<String, Any?>, logger: Logger) {
-        val parameters = request.queryParameters.toFuel()
-        val putRequest = toUrl
-            .httpPut(parameters)
-            .body(receive<ByteArray>())
-
-        forwardRequest(putRequest, extraHeaders, logger)
-    }
-
-    @Deprecated("Bruker OkHttp istedenfor")
     internal suspend fun ApplicationCall.forwardGet(toUrl: String, extraHeaders: Map<String, Any?>, logger: Logger) {
         val parameters = request.queryParameters.toFuel()
         val postRequest = toUrl
             .httpGet(parameters)
 
         forwardRequest(postRequest, extraHeaders, logger)
-    }
-
-    @Deprecated("Bruker OkHttp istedenfor")
-    internal suspend fun ApplicationCall.forwardOptions(toUrl: String, extraHeaders: Map<String, Any?>, logger: Logger) {
-        val parameters = request.queryParameters.toFuel()
-        val optionsRequest = Fuel.request(Method.OPTIONS, toUrl, parameters)
-
-        forwardRequest(optionsRequest, extraHeaders, logger)
     }
 
     private suspend fun ApplicationCall.forwardRequest(fuelRequest: Request, extraHeaders: Map<String, Any?>, logger: Logger) {
