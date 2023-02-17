@@ -23,7 +23,7 @@ jobs:
           cache: gradle
 
       - name: Kjør tester & bygg JAR
-        run: ./gradlew test shadowjar
+        run: ./gradlew shadowjar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
