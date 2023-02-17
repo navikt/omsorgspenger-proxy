@@ -7,16 +7,16 @@ Tjenesten krever Azure-tokens og veksler til hva den bakomforliggende tjenesten 
 Push til main deployer til prod. Bruk 'ci skip' i commit-melding alternativt kjør 'Bygg og deploy' worfklow-action direkt mot branch for att deploye kun til dev.
 
 ## Tjenester dekker
-* /active-directory/me/memberOf (get) - Kun når Open-AM token er i bruk - ellers kan man hente det fra Azure token claim `groups`
-* /dokarkivproxy (put)
+* ~~/active-directory/me/memberOf (get) - Kun når Open-AM token er i bruk - ellers kan man hente det fra Azure token claim `groups`~~
+* ~~/dokarkivproxy (put)~~
 * /infotrygd-grunnlag-paaroerende-sykdom (get) - Token må scopes til nevnte tjeneste, ikke proxy. Den støtter selv Azure-tokens.
 * /k9-sak (kun enkelte endepunkt - se `K9SakRoute`)
-* /open-am/keys (get) - Public endepunkt, krever ingen tokens.
-* /oppgave (get & post)
-* /pdl (post & options) - Kun når Open-AM token er i bruk - ellers kan må gå rett mot PDL.
-* /saf/graphql (post)
+* ~~/open-am/keys (get) - Public endepunkt, krever ingen tokens.~~
+* ~~/oppgave (get & post)~~
+* ~~/pdl (post & options) - Kun når Open-AM token er i bruk - ellers kan må gå rett mot PDL.~~
+* ~~/saf/graphql (post)~~
 * /sak (get & post)
-* /aareg (get)
+* ~~/aareg (get)~~
 
 ### Bruk
 omsorgspenger-proxy har en route per proxyet tjeneste, som beskrevet over. Alt etter dette i url'en blir proxyet videre.   
