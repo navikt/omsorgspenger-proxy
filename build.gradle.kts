@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val junitJupiterVersion = "5.9.1"
-val dusseldorfVersion = "3.2.2.1-4942135"
+val dusseldorfVersion = "3.2.2.3-64ddf9c"
 val ktorVersion = "2.2.1"
 val fuelVersion = "2.3.1"
 
