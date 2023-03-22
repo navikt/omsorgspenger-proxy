@@ -1,7 +1,8 @@
 name: Bygg og deploy
 on:
   push:
-    branches: main
+    branches:
+      - main
     paths-ignore:
       - '**.md'
       - '**.MD'
@@ -11,7 +12,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  build:
+    permissions:
+      contents: read
+      id-token: write
+      security-events: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,26 +27,34 @@ jobs:
           distribution: corretto
           cache: gradle
 
-      - name: Kjør tester & bygg JAR
+      - name: Bygg JAR
         run: ./gradlew shadowjar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Sett image for docker & deploy
-        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY}:$(date "+%Y.%m.%d")-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
-      - uses: docker/login-action@v2
+      - uses: nais/docker-build-push@v0
+        id: docker-push
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          team: omsorgspenger
+          push_image: true
+          dockerfile: Dockerfile
+          docker_context: .
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
 
-      - uses: docker/build-push-action@v3
+      - name: Run Trivy vulnerability scanner on docker image
+        uses: aquasecurity/trivy-action@master
         with:
-          context: .
-          push: true
-          pull: true
-          tags: ${{ env.IMAGE }}
+          image-ref: ${{ steps.docker-push.outputs.image }}
+          ignore-unfixed: true
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
 
       - name: Deploy til dev-fss
         uses: nais/deploy/actions/deploy@v1
@@ -50,6 +63,7 @@ jobs:
           CLUSTER: dev-fss
           RESOURCE: nais/naiserator.yaml
           VARS: nais/dev-fss.json
+          IMAGE: ${{ steps.docker-push.outputs.image }}
 
       - name: Deploy til prod-fss
         if: github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, 'ci skip')
@@ -59,3 +73,4 @@ jobs:
           CLUSTER: prod-fss
           RESOURCE: nais/naiserator.yaml
           VARS: nais/prod-fss.json
+          IMAGE: ${{ steps.docker-push.outputs.image }}
