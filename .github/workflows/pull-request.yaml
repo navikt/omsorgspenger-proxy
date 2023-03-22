@@ -19,7 +19,7 @@ jobs:
           java-version: 17
           distribution: corretto
           cache: gradle
-      - name: Kjør tester & bygg JAR
+      - name: Bygg JAR
         run: ./gradlew shadowjar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

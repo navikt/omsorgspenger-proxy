@@ -5,7 +5,6 @@
   "maxReplicas": "2",
   "azureTenant": "trygdeetaten.no",
   "ingresses": [
-    "https://omsorgspenger-proxy.dev.intern.nav.no",
     "https://omsorgspenger-proxy.dev-fss-pub.nais.io"
   ],
   "env": {

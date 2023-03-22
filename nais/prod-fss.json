@@ -5,7 +5,6 @@
   "maxReplicas": "4",
   "azureTenant": "nav.no",
   "ingresses": [
-    "https://omsorgspenger-proxy.intern.nav.no",
     "https://omsorgspenger-proxy.prod-fss-pub.nais.io"
   ],
   "env": {
