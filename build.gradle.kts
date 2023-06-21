@@ -1,8 +1,8 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfVersion = "3.2.3.0-7a92774"
-val ktorVersion = "2.3.0"
+val dusseldorfVersion = "3.2.3.1-b31dd02"
+val ktorVersion = "2.3.1"
 val fuelVersion = "2.3.1"
 
 val jsonassertVersion = "1.5.1"
@@ -10,7 +10,7 @@ val jsonassertVersion = "1.5.1"
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.8.21"
+    kotlin("jvm") version "1.8.22"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
