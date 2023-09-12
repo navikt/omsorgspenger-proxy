@@ -35,9 +35,6 @@ spec:
         - application: omsorgsdager
           namespace: omsorgspenger
           cluster: {{clusterGcp}}
-        - application: k9-punsjbolle
-          namespace: omsorgspenger
-          cluster: {{clusterGcp}}
   resources:
     limits:
       cpu: 500m
