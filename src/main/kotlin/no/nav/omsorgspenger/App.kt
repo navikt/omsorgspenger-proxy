@@ -83,12 +83,6 @@ internal fun Application.app(
         HealthRoute(healthService = healthService)
         MetricsRoute()
         DefaultProbeRoutes()
-        authenticate(*issuers.azureAnyScoped()) {
-            // Underliggende tjenester støtter Azure-tokens, men ikke tilgjengeliggjort i GCP
-            InfotrygdGrunnlagPaaroerendeSykdomRoute(
-                config = Config.InfotrygdGrunnlagPaaroerendeSykdom(env)
-            )
-        }
         authenticate(*issuers.azureProxyScoped()) {
             // Underliggende tjenester støtter ikke Azure-tokens, veksler til tokens de støtter.
             K9SakRoute(
