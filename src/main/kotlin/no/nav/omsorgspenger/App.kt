@@ -95,10 +95,6 @@ internal fun Application.app(
                 config = Config.K9Sak(env),
                 stsClient = stsClient
             )
-            SakRoute(
-                config = Config.Sak(env),
-                stsClient = stsClient
-            )
         }
     }
 }
