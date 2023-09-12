@@ -15,10 +15,6 @@ internal object Config {
         internal val url = env.getOrFail("STS_TOKEN_URL")
     }
 
-    internal class InfotrygdGrunnlagPaaroerendeSykdom(env: Map<String, String>) {
-        internal val url = env.getOrFail("INFOTRYGD_GRUNNLAG_PAAROERENDE_SYKDOM_BASE_URL")
-    }
-
     internal fun Map<String, String>.getOrFail(key: String) = getOrElse(key) {
         throw IllegalStateException("Mangler Environment variable $key")
     }
