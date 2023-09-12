@@ -10,7 +10,6 @@
   "env": {
     "STS_TOKEN_URL": "https://security-token-service.nais.preprod.local/rest/v1/sts/token",
     "K9_SAK_BASE_URL": "https://k9-sak.nais.preprod.local/k9/sak",
-    "SAK_BASE_URL": "https://sak-q1.dev.intern.nav.no",
     "INFOTRYGD_GRUNNLAG_PAAROERENDE_SYKDOM_BASE_URL": "https://k9-infotrygd.dev.intern.nav.no"
   }
 }
