@@ -26,15 +26,6 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: omsorgspenger-journalforing
-          namespace: omsorgspenger
-          cluster: {{clusterGcp}}
-        - application: omsorgspenger-tilgangsstyring
-          namespace: omsorgspenger
-          cluster: {{clusterGcp}}
-        - application: omsorgsdager
-          namespace: omsorgspenger
-          cluster: {{clusterGcp}}
         - application: k9-punsjbolle
           namespace: omsorgspenger
           cluster: {{clusterGcp}}

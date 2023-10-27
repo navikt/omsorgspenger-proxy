@@ -21,13 +21,10 @@ import no.nav.helse.dusseldorf.ktor.health.HealthReporter
 import no.nav.helse.dusseldorf.ktor.health.HealthRoute
 import no.nav.helse.dusseldorf.ktor.health.HealthService
 import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
-import no.nav.omsorgspenger.Auth.azureAnyScoped
 import no.nav.omsorgspenger.Auth.azureProxyScoped
 import no.nav.omsorgspenger.Auth.omsorgspengerProxyIssuers
 import no.nav.omsorgspenger.config.Config
-import no.nav.omsorgspenger.routes.InfotrygdGrunnlagPaaroerendeSykdomRoute
 import no.nav.omsorgspenger.routes.K9SakRoute
-import no.nav.omsorgspenger.routes.SakRoute
 import no.nav.omsorgspenger.sts.StsRestClient
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
@@ -83,20 +80,10 @@ internal fun Application.app(
         HealthRoute(healthService = healthService)
         MetricsRoute()
         DefaultProbeRoutes()
-        authenticate(*issuers.azureAnyScoped()) {
-            // Underliggende tjenester støtter Azure-tokens, men ikke tilgjengeliggjort i GCP
-            InfotrygdGrunnlagPaaroerendeSykdomRoute(
-                config = Config.InfotrygdGrunnlagPaaroerendeSykdom(env)
-            )
-        }
         authenticate(*issuers.azureProxyScoped()) {
             // Underliggende tjenester støtter ikke Azure-tokens, veksler til tokens de støtter.
             K9SakRoute(
                 config = Config.K9Sak(env),
-                stsClient = stsClient
-            )
-            SakRoute(
-                config = Config.Sak(env),
                 stsClient = stsClient
             )
         }
