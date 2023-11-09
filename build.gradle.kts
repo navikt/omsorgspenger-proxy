@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfVersion = "4.1.0"
+val dusseldorfVersion = "4.1.1"
 val ktorVersion = "2.3.1"
 val fuelVersion = "2.3.1"
 
