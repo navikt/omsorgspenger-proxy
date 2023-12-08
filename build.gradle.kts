@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val dusseldorfVersion = "4.1.2"
 val ktorVersion = "2.3.1"
@@ -15,8 +14,9 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
 
 dependencies {
@@ -46,15 +46,6 @@ repositories {
 }
 
 tasks {
-
-    withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
-    }
-
-    named<KotlinCompile>("compileTestKotlin") {
-        kotlinOptions.jvmTarget = "17"
-    }
-
     withType<Test> {
         useJUnitPlatform()
         testLogging {
@@ -75,6 +66,6 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "8.2.1"
+        gradleVersion = "8.5"
     }
 }
