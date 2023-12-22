@@ -1,6 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-val dusseldorfVersion = "4.1.2"
+val dusseldorfVersion = "4.1.4"
 val ktorVersion = "2.3.1"
 val fuelVersion = "2.3.1"
 
@@ -9,7 +9,7 @@ val jsonassertVersion = "1.5.1"
 val mainClass = "no.nav.omsorgspenger.AppKt"
 
 plugins {
-    kotlin("jvm") version "1.9.21"
+    kotlin("jvm") version "1.9.22"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
