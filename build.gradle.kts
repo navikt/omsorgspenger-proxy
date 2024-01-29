@@ -1,6 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-val dusseldorfVersion = "4.1.5"
+val dusseldorfVersion = "4.1.6"
 val ktorVersion = "2.3.1"
 val fuelVersion = "2.3.1"
 
